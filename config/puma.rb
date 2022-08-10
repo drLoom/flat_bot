@@ -28,14 +28,16 @@ pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 app_dir    = File.expand_path("../..", __FILE__)
 shared_dir = "#{app_dir}/tmp"
 
-puts app_dir
-
 if rails_env == 'production'
   bind "unix://#{shared_dir}/sockets/puma.sock"
   rackup "#{app_dir}/config.ru"
 else
   port ENV.fetch("PORT") { 3000 }
   plugin :tmp_restart
+end
+
+on_worker_boot do
+  ActiveRecord::Base.establish_connection
 end
 
 
