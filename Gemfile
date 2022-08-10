@@ -16,6 +16,7 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 gem "bootsnap", require: false
 gem 'faraday', require: false
 gem 'nokogiri', require: false
+gem 'sd_notify'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]

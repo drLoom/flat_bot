@@ -225,6 +225,7 @@ GEM
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
+    sd_notify (0.1.1)
     selenium-webdriver (4.3.0)
       childprocess (>= 0.5, < 5.0)
       rexml (~> 3.2, >= 3.2.5)
@@ -294,6 +295,7 @@ DEPENDENCIES
   redis (~> 4.0)
   rubocop
   rubocop-rails
+  sd_notify
   selenium-webdriver
   sprockets-rails
   stimulus-rails
