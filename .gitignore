@@ -33,3 +33,7 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+bot_info.txt
+.vscode/
+TAGS
+.DS_Store
