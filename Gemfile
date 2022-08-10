@@ -22,6 +22,7 @@ group :development, :test do
   gem 'rubocop', require: false
   gem 'rubocop-rails', require: false
   gem "capistrano", require: false
+  gem "capistrano-rails", require: false
   gem 'capistrano3-puma' , require: false
   gem 'capistrano-rvm', require: false
 end
