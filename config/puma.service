@@ -22,6 +22,7 @@ User=deploy
 # The path to your application code root directory.
 # Also replace the "<YOUR_APP_PATH>" placeholders below with this path.
 # Example /home/username/myapp
+Environment=RAILS_ENV=production
 WorkingDirectory=/home/deploy/apps/flat_bot/current
 
 # Helpful for debugging socket activation, etc.
@@ -31,6 +32,8 @@ WorkingDirectory=/home/deploy/apps/flat_bot/current
 # an absolute URL to puma. For example /usr/local/bin/puma
 # Alternatively, create a binstub with `bundle binstubs puma --path ./sbin` in the WorkingDirectory
 ExecStart=/home/deploy/.rvm/gems/ruby-3.1.2/wrappers/puma -C /home/deploy/apps/flat_bot/current/config/puma.rb
+ExecStop=/home/deploy/.rvm/bin/rvm exec bundle exec pumactl -F /home/deploy/apps/flat_bot/current/config/puma.rb stop
+ExecReload=/home/deploy/.rvm/bin/rvm exec bundle exec pumactl -F /home/deploy/apps/flat_bot/current/config/puma.rb restart
 
 # Variant: Rails start.
 # ExecStart=/<FULLPATH>/bin/puma -C <YOUR_APP_PATH>/config/puma.rb ../config.ru
