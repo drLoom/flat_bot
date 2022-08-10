@@ -25,7 +25,7 @@ set :deploy_to, "/home/deploy/apps/flat_bot"
 append :linked_files, 'config/master.key'
 
 # Default value for linked_dirs is []
-append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "tmp/webpacker", "public/system", "vendor", "storage"
+append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "tmp/webpacker", "public/system", "storage"
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -38,3 +38,14 @@ append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "tmp/webpack
 
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
+
+namespace :deploy do
+  desc 'Restart application'
+  task :restart do
+    on roles(:app) do
+      execute "cd #{current_path} && (~/.rvm/bin/rvm default do bundle exec pumactl -P #{current_path}/tmp/pids/server.pid restart)"
+    end
+  end
+end
+
+after 'deploy:publishing', 'deploy:restart'
