@@ -10,6 +10,13 @@ development:
   host: <%= Rails.application.credentials.development.database[:host] %>
   port: <%= Rails.application.credentials.development.database[:port] %>
   database: <%= Rails.application.credentials.development.database[:database] %>
+production:
+  <<: *default
+  username: <%= Rails.application.credentials.production.database[:username] %>
+  password: <%= Rails.application.credentials.production.database[:password] %>
+  host: <%= Rails.application.credentials.production.database[:host] %>
+  port: <%= Rails.application.credentials.production.database[:port] %>
+  database: <%= Rails.application.credentials.production.database[:database] %>
 
 # test:
 #   <<: *default
