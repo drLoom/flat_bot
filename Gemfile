@@ -18,7 +18,9 @@ gem 'faraday', require: false
 gem 'nokogiri', require: false
 gem 'sd_notify'
 gem 'ed25519'
+gem 'bcrypt_pbkdf'
 gem 'god'
+gem 'timeout', '~> 0.1.1'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
