@@ -17,6 +17,7 @@ gem "bootsnap", require: false
 gem 'faraday', require: false
 gem 'nokogiri', require: false
 gem 'sd_notify'
+gem 'ed25519'
 gem 'god'
 
 group :development, :test do
