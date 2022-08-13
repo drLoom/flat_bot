@@ -17,6 +17,7 @@ gem "bootsnap", require: false
 gem 'faraday', require: false
 gem 'nokogiri', require: false
 gem 'sd_notify'
+gem 'god'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]

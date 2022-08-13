@@ -7,7 +7,7 @@ module TelegramBot
     attr_accessor :url, :token, :logger
     attr_reader :conn
 
-    def initialize(url: 'https://api.telegram.org', token: Rails.application.credentials.real_e_m_bot[:token], logger: NullLogger.new)
+    def initialize(url: 'https://api.telegram.org', token: Rails.application.credentials.real_e_m_bot[:token], logger: Logger.new("/dev/null"))
       @url, @token = url, token
       @logger      = logger
 
@@ -25,17 +25,32 @@ module TelegramBot
       Signal.trap("INT") { polling = false }
       offset = 0
       while polling
-        results = conn.get('getUpdates', { offset: offset }).body['result'].each do |result|
+        logger.info 'Polling'
+        results = conn.get('getUpdates', { offset: offset, timeout: 3 }).body['result'].each do |result|
+          logger.info result.inspect
+
+          yield result
+
           offset = result['update_id'] + 1
         end
-
-        sleep 1
       end
+    end
+
+    def send_message(**opts)
+      response = conn.post('sendMessage', opts)
+      #binding.irb if !response.success? 
+      # TODO: handle error
+    end
+
+    def post(meth, params)
+      response = conn.post(meth, params)
+      #binding.irb if !response.success? 
+      # TODO: handle error
     end
 
     def set_connection!
       @conn = Faraday.new(base_url) do |f|
-        #f.request :json # encode req bodies as JSON and automatically set the Content-Type header
+        f.request :json # encode req bodies as JSON and automatically set the Content-Type header
         #f.request :retry # retry transient failures
         f.response :json # decode response bodies as JSON
         #f.adapter :net_http # adds the adapter to the connection, defaults to `Faraday.default_adapter`

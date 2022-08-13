@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_04_123339) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_11_211145) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -27,6 +27,19 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_04_123339) do
     t.datetime "updated_at", null: false
     t.index ["date", "id"], name: "index_flats_hist_on_date_and_id", unique: true
     t.index ["date", "object_id"], name: "index_flats_hist_on_date_and_object_id", unique: true
+  end
+
+  create_table "t_users", force: :cascade do |t|
+    t.bigint "tid"
+    t.boolean "is_bot"
+    t.string "first_name"
+    t.string "username"
+    t.string "language_code"
+    t.bigint "chat_id"
+    t.string "chat_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tid", "chat_id"], name: "index_t_users_on_tid_and_chat_id", unique: true
   end
 
 end

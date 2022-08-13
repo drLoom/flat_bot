@@ -25,7 +25,7 @@ set :deploy_to, "/home/deploy/apps/flat_bot"
 append :linked_files, 'config/master.key'
 
 # Default value for linked_dirs is []
-append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "tmp/webpacker", "public/system", "storage"
+append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "tmp/webpacker", "public/system", "storage", 'config/god_pids'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -46,6 +46,14 @@ namespace :deploy do
       execute "cd #{current_path} && (~/.rvm/bin/rvm default do bundle exec pumactl -P #{current_path}/tmp/pids/server.pid restart)"
     end
   end
+
+  desc 'Restart application'
+  task :restart_polling do
+    on roles(:app) do
+      execute "cd #{current_path} && (~/.rvm/bin/rvm default do bundle exec god -c #{current_path}/lib/god/polling.god)"
+    end
+  end
 end
 
 after 'deploy:publishing', 'deploy:restart'
+after 'deploy:restart', 'deploy:restart_polling'
