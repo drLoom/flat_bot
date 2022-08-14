@@ -17,13 +17,38 @@ module TelegramBot
           update['callback_query']['data']
         end
 
-        user = extract_user(update) if update['message']
+        user = extract_user(update)
 
         case cmd
         when '/stats'
           text = prepare_stats
 
           client.send_message(chat_id: user.chat_id, text: text, parse_mode: 'MarkdownV2')
+
+        when '/settings'
+          client.send_message(
+            chat_id:      user.chat_id,
+            text:         'Количество комнат',
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: '1', callback_data: 'settings_rooms_1' },
+                  { text: '2', callback_data: 'settings_rooms_2' },
+                  { text: '3', callback_data: 'settings_rooms_3' }
+                ],
+                [ 
+                  { text: '4', callback_data: 'settings_rooms_4' },
+                  { text: '5+', callback_data: 'settings_rooms_5+' }
+                ]
+              ]
+            }
+          )
+        when /settings_rooms_\d/
+          rooms = cmd[/\d+\+?/]
+          # TODO: use 1 for now
+          notification = user.notifications.first || user.notifications.create!(rooms: rooms)
+
+          client.post('sendMessage', { chat_id: user.chat_id, text: notification.name })
         when 'test_inline'
           client.send_message(
             chat_id:      user.chat_id,
@@ -58,7 +83,7 @@ module TelegramBot
     end
 
     def extract_user(update)
-      params = user_info(update['message'])
+      params = user_info(update['message'] || update['callback_query']['message'])
       TUser.find_by(params) || TUser.create!(params)
     end
 
@@ -84,32 +109,3 @@ module TelegramBot
     end
   end
 end
-
-# module TelegramBot
-#   class PollingV
-#     def start
-#       Telegram::Bot::Client.run(Rails.application.credentials.real_e_m_bot[:token], logger: Rails.logger) do |bot|
-#         bot.listen do |message|
-#           puts 'poll'
-#           case message.text
-#           when '/start'
-#             bot.api.send_message(chat_id: message.chat.id, text: "Hello, #{message.from.first_name}")
-#           when '/stats'
-#             question = 'Статистика по:'
-#             answers  = Telegram::Bot::Types::ReplyKeyboardMarkup.new(
-#               keyboard: [['Total']],
-#               one_time_keyboard: true
-#             )
-#             bot.api.send_message(chat_id: message.chat.id, text: question, reply_markup: answers)
-#           when 'Total'
-#             text = "Collected: #{FlatsHist.last_collected}"
-#             bot.api.send_message(chat_id: message.chat.id, text: text, reply_markup: answers)
-#           when '/stop'
-#             bot.api.send_message(chat_id: message.chat.id, text: "Bye, #{message.from.first_name}")
-#           else
-#           end
-#         end
-#       end
-#     end
-#   end
-# end

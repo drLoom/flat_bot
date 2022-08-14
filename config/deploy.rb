@@ -47,10 +47,18 @@ namespace :deploy do
     end
   end
 
-  desc 'Restart application'
+  desc 'Restart polling'
   task :restart_polling do
     on roles(:app) do
-      execute "cd #{current_path} && (~/.rvm/bin/rvm default do bundle exec god -c #{current_path}/lib/god/polling.god)"
+      #execute "cd #{current_path} && (~/.rvm/bin/rvm default do bundle exec god -c #{current_path}/lib/god/polling.god &)"
+      execute "cd #{current_path} && (~/.rvm/bin/rvm default do bundle exec god restart tpooling)"
+    end
+  end
+
+  desc 'Stop polling'
+  task :stop_polling do
+    on roles(:app) do
+      execute "cd #{current_path} && (~/.rvm/bin/rvm default do bundle exec god stop tpooling)"
     end
   end
 end

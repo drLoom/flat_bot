@@ -8,9 +8,19 @@ namespace :flats do
 end
 
 namespace :t_bot do
+  desc 'Set bot commands'
+  task set_commands: :environment do
+    TelegramBot::SetupCommands.new.set
+  end
+
   desc 'Start polling'
   task start_pooling: :environment do
     TelegramBot::Reception.new.open
+  end
+
+  desc 'Send notifications'
+  task send_notifications: :environment do
+    TelegramBot::SendNotifications.new.send
   end
 end
 
