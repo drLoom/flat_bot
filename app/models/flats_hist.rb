@@ -47,6 +47,9 @@ class FlatsHist < ApplicationRecord
 
   scope :recent, -> { where(date: last_date) }
   scope :newly, -> do
-     recent.where.not(object_id: FlatsHist.where('date < ?', last_date).select(:object_id))
+     recent
+     .where.not(object_id: FlatsHist.where('date < ?', last_date)
+     .where('created_at = updated_at')
+     .select(:object_id))
   end
 end

@@ -36,7 +36,7 @@ module TelegramBot
 
     def present_flat(f)
       <<~FLAT
-        *Price$:* #{f.price_usd}
+        *Price$:* #{f.price_usd.round}
         *Area:* #{f.area}
         [#{f.object_id}](#{f.url})
       FLAT
