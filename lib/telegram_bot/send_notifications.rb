@@ -17,7 +17,7 @@ module TelegramBot
 
         u.notifications.each do |n|
           flats = flats(n.rooms)
-          flats.order(price_usd: :desc).limit(1).each do |f|
+          flats.order(price_usd: :desc).limit(10).each do |f|
             text = escape_str(present_flat(f))
 
             res = client.post('sendPhoto', { chat_id: u.chat_id, caption: text, photo: f.photo, parse_mode: 'MarkdownV2' })
