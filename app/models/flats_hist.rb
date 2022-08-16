@@ -48,8 +48,23 @@ class FlatsHist < ApplicationRecord
   scope :recent, -> { where(date: last_date) }
   scope :newly, -> do
      recent
-     .where.not(object_id: FlatsHist.where('date < ?', last_date)
+     .where.not(object_id: FlatsHist.where('date < ?', last_date).select(:object_id))
      .where('created_at = updated_at')
-     .select(:object_id))
+  end
+
+  def photo
+    data['photo']
+  end
+
+  def adress
+    data['location']['address']
+  end
+
+  def floor
+    data['floor']
+  end
+
+  def number_of_floors
+    data['number_of_floors']
   end
 end

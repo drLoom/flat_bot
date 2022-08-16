@@ -35,7 +35,7 @@ module Flats
         price_usd: row['price']['converted']['USD']['amount'],
         rooms:     row['number_of_rooms'],
         url:       row['url'],
-        data:      row.to_json
+        data:      row
       }
     end
 
