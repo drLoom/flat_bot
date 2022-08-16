@@ -9,11 +9,11 @@ class FlatsHist < ApplicationRecord
     end
 
     def last_collected
-      Rails.cache.fetch("FlatsHist#last_collected", expires_in: 1.hours) { where(date: last_date).count(:id) }
+      Rails.cache.fetch("FlatsHist#last_collected", expires_in: 1.hours) { where(date: last_date).count(:object_id) }
     end
 
     def last_newly
-      Rails.cache.fetch("FlatsHist#last_collected", expires_in: 1.hours) { newly.count(:id) }
+      Rails.cache.fetch("FlatsHist#last_newly", expires_in: 1.hours) { newly.count(:object_id) }
     end
 
     [1, 2, 3, 4].each do |i|
