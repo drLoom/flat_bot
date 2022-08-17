@@ -16,8 +16,11 @@ module TelegramBot
         Rails.logger.info "Processing user: #{u.id} (#{idx} / #{users.size})"
 
         u.notifications.each do |n|
-          flats = flats(n.rooms)
-          flats.order(price_usd: :desc).limit(10).each do |f|
+          relation = FlatsHist.newly
+          relation = by_rooms(relation, n.rooms)
+          relation = by_area(relation, n.meters)
+          relation = by_price(relation, n.price)
+          relation.order(price_usd: :desc).limit(10).each do |f|
             text = escape_str(present_flat(f))
 
             res = client.post('sendPhoto', { chat_id: u.chat_id, caption: text, photo: f.photo, parse_mode: 'MarkdownV2' })
@@ -29,10 +32,41 @@ module TelegramBot
 
     private
 
-    def flats(rooms_cond)
+    def by_rooms(relation, rooms_cond)
+      return relation if rooms_cond.blank?
+
       case rooms_cond
       when '1', '2', '3', '4'
-        FlatsHist.newly.where(rooms: rooms_cond)
+        relation.where(rooms: rooms_cond)
+      when '5+'
+        relation.where('rooms >= 5')
+      end
+    end
+
+    def by_area(relation, cond)
+      by_condition(relation, cond, 'area')
+    end
+
+    def by_price(relation, cond)
+      by_condition(relation, cond, 'price_usd')
+    end
+
+    def by_condition(relation, cond, attr)
+      return relation if cond.blank?
+
+      case cond
+      when /\Al/
+        v = cond[/\d+/].to_i
+        v = v * 1000 if attr == 'price_usd' # TODO:
+        relation.where('#{attr} <= ?', )
+      when /_/
+        lv, gv = extact_interval(cond)
+        lv, gv = [lv.to_i * 1000, gv.to_i * 1000] if attr == 'price_usd'
+        relation.where(attr => (lv..gv))
+      when /\Ag/
+        v = cond[/\d+/].to_i
+        v = v * 1000 if attr == 'price_usd' # TODO:
+        relation.where('#{attr} >= ?', cond[/\d+/])
       end
     end
 
@@ -47,7 +81,11 @@ module TelegramBot
     end
 
     def escape_str(str)
-      str.gsub('.', '\\.')
+      str.gsub('.', '\\.').gsub('-', '\\-')
+    end
+
+    def extact_interval(str)
+      str.scan(/(\d+)_(\d+)/).flatten
     end
   end
 end

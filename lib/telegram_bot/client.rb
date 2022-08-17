@@ -37,15 +37,17 @@ module TelegramBot
     end
 
     def send_message(**opts)
-      response = conn.post('sendMessage', opts)
-      #binding.irb if !response.success? 
-      # TODO: handle error
+      post('sendMessage', opts)
     end
 
     def post(meth, params)
       response = conn.post(meth, params)
-      #binding.irb if !response.success? 
-      # TODO: handle error
+
+      if !response.success?
+        logger.error "Failed to send message. #{response.inspect}. Params: #{params.inspect}"
+      end
+
+      response
     end
 
     def set_connection!

@@ -5,7 +5,9 @@ class TUsserNotification < ApplicationRecord
 
   def name
     [
-      rooms
-    ].compact.join(' - ')
+      ("Комнат #{rooms}" if rooms.present?),
+      ("м² #{meters}" if meters.present?),
+      ("Цена #{price}" if price.present?),
+    ].compact.join(', ').gsub('_', '-')
   end
 end

@@ -22,7 +22,7 @@ set :deploy_to, "/home/deploy/apps/flat_bot"
 # set :pty, true
 
 # Default value for :linked_files is []
-append :linked_files, 'config/master.key'
+append :linked_files, 'config/master.key', 'tmp/anecs.txt'
 
 # Default value for linked_dirs is []
 append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "tmp/webpacker", "public/system", "storage", 'tmp/god_pids'

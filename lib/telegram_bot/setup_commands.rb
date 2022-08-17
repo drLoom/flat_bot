@@ -12,8 +12,8 @@ module TelegramBot
     def set
       commands = [
         { 'command' => '/stats', 'description' => 'See bots stats' },
-        # { 'command' => '/users_stats', 'description' => 'See user stats' },
-        { 'command' => '/settings', 'description' => 'Set notification rules' }
+        { 'command' => '/settings', 'description' => 'Set notification rules' },
+        #{ 'command' => '/feedback', 'description' => 'Оставте отзыв' }
       ]
 
       res = client.post('setMyCommands', { commands: commands })
