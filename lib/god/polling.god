@@ -12,5 +12,6 @@ God.watch do |w|
   w.env = { 'RAILS_ENV' => "production" }
 
   w.start = "cd #{root_path}; bundle exec rake t_bot:start_pooling"
+  w.stop_timeout = 5.seconds
   w.keepalive
 end

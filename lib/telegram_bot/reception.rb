@@ -38,7 +38,7 @@ module TelegramBot
             message_id:   update['callback_query']['message']['message_id'],
             chat_id: user.chat_id, text: 'Цена', reply_markup: price_keyboard
           )
-        when /settings_rooms_\d/
+        when /settings_rooms_/
           rooms = cmd[/\d+\+?/]
           # TODO: use 1 for now
           notification = user.notifications.first || user.notifications.new
@@ -97,8 +97,12 @@ module TelegramBot
               }
             }
           )
-        # when '/feedback'
-        #   client.send_message(chat_id: TUser.find(2).chat_id, text: 'f') # TODO: cache
+        when /\/feedback/
+          feedback = cmd[/\/feedback(.*)/, 1]&.strip
+          next unless feedback.present?
+
+          feedback = "Feedback from (#{user.id}): #{feedback}"
+          client.send_message(chat_id: TUser.find(2).chat_id, text: feedback)
         else
           client.send_message(chat_id: user.chat_id, text: @anecs.sample)
         end
@@ -148,6 +152,7 @@ module TelegramBot
           [
             { text: '4', callback_data:  'settings_rooms_4' },
             { text: '5+', callback_data: 'settings_rooms_5+' },
+            { text: 'Любое', callback_data: 'settings_rooms_' },
             { text: 'Назад', callback_data: 'back_from_rooms' }
           ]
         ]
@@ -165,6 +170,7 @@ module TelegramBot
           [
             { text: '80-110', callback_data:  'settings_area_80_110' },
             { text: '>110', callback_data: 'settings_area_g110' },
+            { text: 'Любое', callback_data: 'settings_area_' },
             { text: 'Назад', callback_data: 'back_from_area' }
           ]
         ]
@@ -182,6 +188,7 @@ module TelegramBot
           [
             { text: '90-120', callback_data:  'settings_price_90_120' },
             { text: '>120', callback_data: 'settings_price_g120' },
+            { text: 'Любая', callback_data: 'settings_price_' },
             { text: 'Назад', callback_data: 'back_from_price' }
           ]
         ]
