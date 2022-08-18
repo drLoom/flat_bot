@@ -2,6 +2,8 @@
 
 module TelegramBot
   class Reception
+    include ActionView::Helpers::NumberHelper
+
     attr_reader :client
 
     def initialize
@@ -103,6 +105,11 @@ module TelegramBot
 
           feedback = "Feedback from (#{user.id}): #{feedback}"
           client.send_message(chat_id: TUser.find(2).chat_id, text: feedback)
+        when /onliner\.by.*apartments\/(\d+)/
+          object_id = cmd[/onliner\.by.*apartments\/(\d+)/, 1].to_i
+          history   = flatt_history(object_id)
+
+          client.send_message(chat_id: user.chat_id, text: prepare_history(history))
         else
           client.send_message(chat_id: user.chat_id, text: @anecs.sample)
         end
@@ -210,6 +217,50 @@ module TelegramBot
           *2:* #{FlatsHist.newly2}
           *1:* #{FlatsHist.newly1}
       STATS
+    end
+
+    def flatt_history(object_id)
+      binds = [ActiveRecord::Relation::QueryAttribute.new('object_id', object_id, ActiveRecord::Type::Integer.new)]
+      results = ActiveRecord::Base.connection.exec_query(<<~SQL, 'sql', binds)
+        select *
+        from
+        (
+          select
+            date,
+            object_id,
+            price_usd,
+            lag(price_usd, 1) over (
+              partition by object_id
+              order by date
+            ) previous_price
+          from flats_hist
+          where object_id = $1
+          order by date
+        ) t
+        where previous_price <> price_usd or previous_price is null
+      SQL
+
+      results
+    end
+
+    def prepare_history(rows)
+      rows.map do |r|
+        [
+          r['date'],
+          number_to_currency(r['price_usd'], precision: 0, delimiter: ' '),
+          direction(r['price_usd'], r['previous_price'])
+        ].compact.join(' ')
+      end.join("\n")
+    end
+
+    def direction(price, previous_price)
+      return if price.blank? || previous_price.blank? || price == previous_price
+
+      if price > previous_price
+        '↑'
+      else
+        '↓'
+      end
     end
   end
 end
