@@ -20,30 +20,58 @@ module TelegramBot
         when '/stats'
           client.send_message(chat_id: user.chat_id, text: prepare_stats, parse_mode: 'MarkdownV2')
         when '/settings', 'Настроить нотификации'
-          client.send_message(chat_id: user.chat_id, text: 'Настройте параметры поиска', reply_markup: settings_keyboard)
-        when 'get_rooms_settings'
+
+          client.send_message(chat_id: user.chat_id, text: 'Настройте параметры поиска', reply_markup: notifications_keyboard)
+        when /settings_keyboard_\w/
+          type = cmd[/settings_keyboard_(\w)/, 1]
+          next unless %w[n c].include?(type)
+
+          message = case type
+          when 'c'
+            'Изменение цены'
+          when 'n'
+            'Новые объвления'
+          end
+
+          client.send_message(chat_id: user.chat_id, text: message, reply_markup: settings_keyboard(type))
+        when /get_rooms_settings/
+          type = extract_type(cmd)
+
           client.post(
             'editMessageText',
             chat_id: user.chat_id,
-            message_id:   update['callback_query']['message']['message_id'],
-             text: 'Количество комнат', reply_markup: rooms_keyboard
+            message_id: update['callback_query']['message']['message_id'],
+            text: 'Количество комнат', reply_markup: rooms_keyboard(type)
           )
-        when 'get_area_settings'
+        when /get_area_settings/
+          type = extract_type(cmd)
+
           client.post(
             'editMessageText',
             message_id:   update['callback_query']['message']['message_id'],
-            chat_id: user.chat_id, text: 'м²', reply_markup: area_keyboard
+            chat_id: user.chat_id, text: 'м²', reply_markup: area_keyboard(type)
           )
-        when 'get_price_settings'
+        when /get_price_settings/
+          type = extract_type(cmd)
+
           client.post(
             'editMessageText',
             message_id:   update['callback_query']['message']['message_id'],
-            chat_id: user.chat_id, text: 'Цена', reply_markup: price_keyboard
+            chat_id: user.chat_id, text: 'Цена', reply_markup: price_keyboard(type)
           )
-        when /settings_rooms_/
+        when /get_price_direction_settings/
+          type = extract_type(cmd)
+
+          client.post(
+            'editMessageText',
+            message_id:   update['callback_query']['message']['message_id'],
+            chat_id: user.chat_id, text: 'Направление цены', reply_markup: price_direction_keyboard(type)
+          )
+        when /settings_\w_rooms_/
+          type = extract_attr_settings(cmd)
           rooms = cmd[/\d+\+?/]
           # TODO: use 1 for now
-          notification = user.notifications.first || user.notifications.new
+          notification = user.notifications.find_by(ntype: type) || user.notifications.new(ntype: type)
           notification.update!(rooms: rooms)
 
           client.post(
@@ -51,11 +79,12 @@ module TelegramBot
              chat_id:      user.chat_id,
              text:         notification.name,
              message_id:   update['callback_query']['message']['message_id'],
-             reply_markup: settings_keyboard
-            )
-        when /settings_area_/
-          setting = cmd[/settings_area_(\w+)/, 1]
-          notification = user.notifications.first || user.notifications.new
+             reply_markup: settings_keyboard(type)
+          )
+        when /settings_\w_area_/
+          type = extract_attr_settings(cmd)
+          setting = cmd[/settings_\w_area_(\w+)/, 1]
+          notification = user.notifications.find_by(ntype: type) || user.notifications.new(ntype: type)
           notification.update!(meters: setting)
 
           client.post(
@@ -63,11 +92,12 @@ module TelegramBot
              chat_id:      user.chat_id,
              text:         notification.name,
              message_id:   update['callback_query']['message']['message_id'],
-             reply_markup: settings_keyboard
+             reply_markup: settings_keyboard(type)
             )
-        when /settings_price_/
-          setting = cmd[/settings_price_(\w+)/, 1]
-          notification = user.notifications.first || user.notifications.new
+        when /settings_\w_price_/
+          type = extract_attr_settings(cmd)
+          setting = cmd[/settings_\w_price_(\w+)/, 1]
+          notification = user.notifications.find_by(ntype: type) || user.notifications.new(ntype: type)
           notification.update!(price: setting)
 
           client.post(
@@ -75,15 +105,36 @@ module TelegramBot
              chat_id:      user.chat_id,
              text:         notification.name,
              message_id:   update['callback_query']['message']['message_id'],
-             reply_markup: settings_keyboard
+             reply_markup: settings_keyboard(type)
             )
-        when 'back_from_rooms', 'back_from_area', 'back_from_price'
+        when /settings_\w_dprice_.?/
+          type = extract_attr_settings(cmd)
+          direction = cmd[/.?\z/]
+          notification = user.notifications.find_by(ntype: type) || user.notifications.new(ntype: type)
+          notification.update!(price_direction: direction)
+
+          client.post(
+            'editMessageText',
+             chat_id:      user.chat_id,
+             text:         notification.name,
+             message_id:   update['callback_query']['message']['message_id'],
+             reply_markup: settings_keyboard(type)
+          )
+        when /back_from_\w/
+          type = cmd[/back_from_(\w)/, 1]
+          message = case type
+                    when 'c'
+                      'Изменение цены'
+                    when 'n'
+                      'Новые объвления'
+                    end
+
           client.post(
             'editMessageText',
              chat_id:      user.chat_id,
              message_id:   update['callback_query']['message']['message_id'],
-             text:         'Настройте параметры поиска',
-             reply_markup: settings_keyboard,
+             text:         message,
+             reply_markup: settings_keyboard(type),
           )
         when '/start'
           ans = client.post(
@@ -133,71 +184,101 @@ module TelegramBot
       { tid: update['from']['id'],  chat_id: update['chat']['id'] }
     end
 
-    def settings_keyboard
+    def notifications_keyboard
       {
         inline_keyboard: [
           [
-            { text: 'Количество комнат', callback_data: 'get_rooms_settings' },
-            { text: 'м²', callback_data: 'get_area_settings' },
-          ],
-          [
-            { text: 'Цена', callback_data: 'get_price_settings' }
+            { text: 'Новые объявления', callback_data: 'settings_keyboard_n' },
+            { text: 'Изменение цены', callback_data: 'settings_keyboard_c' },
           ]
         ],
         resize_keyboard: true
       }
     end
 
-    def rooms_keyboard
+    def settings_keyboard(notification_type)
+      keyboard = {
+        inline_keyboard: [
+          [
+            { text: 'Количество комнат', callback_data: "get_rooms_settings_#{notification_type}" },
+            { text: 'м²', callback_data: "get_area_settings_#{notification_type}" },
+          ],
+          [
+            { text: 'Цена', callback_data: "get_price_settings_#{notification_type}" },
+          ]
+        ],
+        resize_keyboard: true
+      }
+
+      if notification_type == 'c'
+        keyboard[:inline_keyboard][1] << { text: 'Направление Цены', callback_data: "get_price_direction_settings_#{notification_type}" }
+      end
+
+      keyboard
+    end
+
+    def rooms_keyboard(type)
       {
         inline_keyboard: [
           [
-            { text: '1', callback_data: 'settings_rooms_1' },
-            { text: '2', callback_data: 'settings_rooms_2' },
-            { text: '3', callback_data: 'settings_rooms_3' }
+            { text: '1', callback_data: "settings_#{type}_rooms_1" },
+            { text: '2', callback_data: "settings_#{type}_rooms_2" },
+            { text: '3', callback_data: "settings_#{type}_rooms_3" }
           ],
           [
-            { text: '4', callback_data:  'settings_rooms_4' },
-            { text: '5+', callback_data: 'settings_rooms_5+' },
-            { text: 'Любое', callback_data: 'settings_rooms_' },
-            { text: 'Назад', callback_data: 'back_from_rooms' }
+            { text: '4', callback_data:  "settings_#{type}_rooms_4" },
+            { text: '5+', callback_data: "settings_#{type}_rooms_5+" },
+            { text: 'Любое', callback_data: "settings_#{type}_rooms_" },
+            { text: 'Назад', callback_data: "back_from_#{type}" }
           ]
         ]
       }
     end
 
-    def area_keyboard
+    def area_keyboard(type)
       {
         inline_keyboard: [
           [
-            { text: '<= 30', callback_data: 'settings_area_l30' },
-            { text: '30-50', callback_data: 'settings_area_30_50' },
-            { text: '50-80', callback_data: 'settings_area_50_80' }
+            { text: '<= 30', callback_data: "settings_#{type}_area_l30" },
+            { text: '30-50', callback_data: "settings_#{type}_area_30_50" },
+            { text: '50-80', callback_data: "settings_#{type}_area_50_80" }
           ],
           [
-            { text: '80-110', callback_data:  'settings_area_80_110' },
-            { text: '>110', callback_data: 'settings_area_g110' },
-            { text: 'Любое', callback_data: 'settings_area_' },
-            { text: 'Назад', callback_data: 'back_from_area' }
+            { text: '80-110', callback_data: "settings_#{type}_area_80_110" },
+            { text: '>110', callback_data: "settings_#{type}_area_g110" },
+            { text: 'Любое', callback_data: "settings_#{type}_area_" },
+            { text: 'Назад', callback_data: "back_from_#{type}" }
           ]
         ]
       }
     end
 
-    def price_keyboard
+    def price_keyboard(type)
       {
         inline_keyboard: [
           [
-            { text: '<= 30', callback_data: 'settings_price_l30' },
-            { text: '30-70', callback_data: 'settings_price_30_70' },
-            { text: '70-90', callback_data: 'settings_price_70_90' }
+            { text: '<= 30', callback_data: "settings_#{type}_price_l30" },
+            { text: '30-70', callback_data: "settings_#{type}_price_30_70" },
+            { text: '70-90', callback_data: "settings_#{type}_price_70_90" }
           ],
           [
-            { text: '90-120', callback_data:  'settings_price_90_120' },
-            { text: '>120', callback_data: 'settings_price_g120' },
-            { text: 'Любая', callback_data: 'settings_price_' },
-            { text: 'Назад', callback_data: 'back_from_price' }
+            { text: '90-120', callback_data:  "settings_#{type}_price_90_120" },
+            { text: '>120', callback_data: "settings_#{type}_price_g120" },
+            { text: 'Любая', callback_data: "settings_#{type}_price_" },
+            { text: 'Назад', callback_data: "back_from_#{type}" }
           ]
+        ]
+      }
+    end
+
+    def price_direction_keyboard(type)
+      {
+        inline_keyboard: [
+          [
+            { text: '↑', callback_data: "settings_#{type}_dprice_+" },
+            { text: '↓', callback_data: "settings_#{type}_dprice_-" },
+            { text: '↑↓', callback_data: "settings_#{type}_dprice_=" }
+          ],
         ]
       }
     end
@@ -244,7 +325,7 @@ module TelegramBot
     end
 
     def prepare_history(rows)
-      rows.map do |r|
+      rows.last(20).map do |r|
         [
           r['date'],
           number_to_currency(r['price_usd'], precision: 0, delimiter: ' '),
@@ -261,6 +342,14 @@ module TelegramBot
       else
         '↓'
       end
+    end
+
+    def extract_type(cmd)
+      cmd[/(\w)\z/, 1]
+    end
+
+    def extract_attr_settings(cmd)
+      cmd[/settings_(\w)_/, 1]
     end
   end
 end

@@ -22,6 +22,11 @@ namespace :t_bot do
   task send_notifications: :environment do
     TelegramBot::SendNotifications.new.send
   end
+
+  desc 'Send price change notifications'
+  task send_pc_notifications: :environment do
+    TelegramBot::SendNotifications.new.send_pc
+  end
 end
 
 namespace :test do

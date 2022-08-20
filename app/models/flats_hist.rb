@@ -52,6 +52,16 @@ class FlatsHist < ApplicationRecord
      .where('created_at = updated_at')
   end
 
+  has_one :previous_price,
+    -> { where(date: FlatsHist.distinct.select(:date).order(date: :desc).limit(1).offset(1)) },
+    class_name: 'FlatsHist', primary_key: :object_id, foreign_key: :object_id
+
+  scope :changed_price, -> do
+    joins(:previous_price)
+      .includes(:previous_price)
+      .where('flats_hist.price_usd <> previous_prices_flats_hist.price_usd')
+  end
+
   def photo
     data['photo']
   end

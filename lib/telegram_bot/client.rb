@@ -14,12 +14,6 @@ module TelegramBot
       set_connection!
     end
 
-    def test
-      response = conn.get('getMe')
-      result   = handle_response(response)
-      puts result
-    end
-
     def get_updates
       polling = true
       Signal.trap("INT") { polling = false }
@@ -63,14 +57,6 @@ module TelegramBot
 
     def base_url
       @base_url ||= "#{url}/bot#{token}/"
-    end
-
-    def handle_response(response)
-      if response.success?
-        response['result']
-      else
-        logger.error response.inspect
-      end
     end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_14_204114) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_20_153956) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -49,6 +49,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_14_204114) do
     t.string "price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "ntype"
+    t.string "price_direction"
     t.index ["t_user_id"], name: "index_t_usser_notifications_on_t_user_id"
   end
 
