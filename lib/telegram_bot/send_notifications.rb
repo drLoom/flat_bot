@@ -42,8 +42,8 @@ module TelegramBot
           relation = by_area(relation, n.meters)
           relation = by_price(relation, n.price)
           relation = by_price_direction(relation, n.price_direction)
-          #relation = relation.select('ABS(flats_hist.price_usd - previous_prices_flats_hist.price_usd) AS change')
-          relation.limit(10).each do |f|
+          relation = relation.select(relation.arel.projections, 'ABS(flats_hist.price_usd - previous_prices_flats_hist.price_usd) AS change')
+          relation.order(change: :desc).limit(20).each do |f|
             text = escape_str(present_flat(f, change_price: true))
 
             res = client.post('sendPhoto', { chat_id: u.chat_id, caption: text, photo: f.photo, parse_mode: 'MarkdownV2' })
