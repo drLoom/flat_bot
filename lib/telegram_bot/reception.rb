@@ -7,7 +7,7 @@ module TelegramBot
     attr_reader :client
 
     def initialize
-      @client =  Client.new(logger: Rails.logger)
+      @client = Client.new(logger: Rails.logger)
       @anecs  = File.read('tmp/anecs.txt').split('SEPARATOR')
     end
 
@@ -181,7 +181,7 @@ module TelegramBot
     end
 
     def user_info(update)
-      { tid: update['from']['id'],  chat_id: update['chat']['id'] }
+      { tid: update['from']['id'], chat_id: update['chat']['id'] }
     end
 
     def notifications_keyboard
@@ -262,7 +262,7 @@ module TelegramBot
             { text: '70-90', callback_data: "settings_#{type}_price_70_90" }
           ],
           [
-            { text: '90-120', callback_data:  "settings_#{type}_price_90_120" },
+            { text: '90-120', callback_data: "settings_#{type}_price_90_120" },
             { text: '>120', callback_data: "settings_#{type}_price_g120" },
             { text: 'Любая', callback_data: "settings_#{type}_price_" },
             { text: 'Назад', callback_data: "back_from_#{type}" }
