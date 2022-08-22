@@ -108,7 +108,8 @@ module TelegramBot
 
     def present_flat(f, change_price: false)
       <<~FLAT
-        *Цена:* #{number_to_currency(f.price_usd, precision: 0, delimiter: ' ')}
+        *Цена:* #{format_price(f.price_usd)}
+        *Цена м²:* #{format_price(f.meter_price_usd)}
         *Площадь:* #{f.area}
         *Адрес:* #{f.adress}
         *Этаж:* #{f.floor} \\(#{f.number_of_floors}\\)

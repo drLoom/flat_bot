@@ -77,4 +77,8 @@ class FlatsHist < ApplicationRecord
   def number_of_floors
     data['number_of_floors']
   end
+
+  def meter_price_usd
+    price_usd / area
+  end
 end
