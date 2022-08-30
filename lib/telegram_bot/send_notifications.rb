@@ -43,6 +43,7 @@ module TelegramBot
           relation = by_price(relation, n.price)
           relation = by_price_direction(relation, n.price_direction)
           relation = relation.select(relation.arel.projections, 'ABS(flats_hist.price_usd - previous_prices_flats_hist.price_usd) AS change')
+          relation = relation.where('ABS(flats_hist.price_usd - previous_prices_flats_hist.price_usd) >= 500')
           relation.order(change: :desc).limit(20).each do |f|
             text = escape_str(present_flat(f, change_price: true))
 
