@@ -70,7 +70,7 @@ module TelegramBot
       end
 
       def calc_diff(prev, curr)
-        diff     = (prev - curr).round(2)
+        diff     = (curr - prev).round(2)
         diff_pct = (diff.to_f / prev * 100).round(2)
 
         [diff, diff_pct]
