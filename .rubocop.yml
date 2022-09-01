@@ -20,3 +20,9 @@ Layout/SpaceAroundMethodCallOperator:
 
 Layout/ExtraSpacing:
   Enabled: true
+
+Layout/IndentationWidth:
+  Enabled: true
+
+Layout/DefEndAlignment:
+  Enabled: true
