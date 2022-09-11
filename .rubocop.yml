@@ -26,3 +26,6 @@ Layout/IndentationWidth:
 
 Layout/DefEndAlignment:
   Enabled: true
+
+Style/HashSyntax:
+  Enabled: true
