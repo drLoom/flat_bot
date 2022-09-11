@@ -6,8 +6,8 @@ module TelegramBot
 
     attr_reader :client
 
-    def initialize
-      @client = Client.new(logger: Rails.logger)
+    def initialize(client: Client.new(logger: Rails.logger))
+      @client = client
       @anecs  = File.read('tmp/anecs.txt').split('SEPARATOR')
     end
 

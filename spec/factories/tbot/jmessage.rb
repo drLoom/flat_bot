@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :message, class: 'TelegramBot::Types::Message' do
+  factory :jmessage, class: Hash do
     skip_create
 
     sequence :message_id do |n|
@@ -10,8 +10,9 @@ FactoryBot.define do
 
     text { 'Test' }
 
-    # ignore do
-    #   id { SecureRandom.random_number(1_000_000_000).to_s }
-    # end
+    user { create(:juser) }
+    chat { create(:jchat) }
+
+    initialize_with { attributes.stringify_keys }
   end
 end

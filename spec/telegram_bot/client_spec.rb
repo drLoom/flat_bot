@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe TelegramBot::Client do
   describe "Client yields message" do
     context "Mesage received" do
-      let(:message) { create(:message) }
+      let(:message) { create(:jmessage) }
 
 
       it "yields message" do
