@@ -41,14 +41,46 @@ RSpec.describe TelegramBot::Reception do
       it 'show settings keybord' do
         markup = {
           inline_keyboard: [
-            [{ text:          "Новые объявления",
-               callback_data: "settings_keyboard_n" },
-                { text: "Изменение цены", callback_data: "settings_keyboard_c" }]],
+            [{ text: "Новые объявления",callback_data: "settings_keyboard_n" },
+             { text: "Изменение цены", callback_data: "settings_keyboard_c" }]],
           resize_keyboard: true
         }
 
         expect(client).to receive(:send_message).with(
           chat_id: t_user.chat_id, text: 'Настройте параметры поиска', reply_markup: markup
+        )
+
+        subject.open
+      end
+    end
+
+    context 'roowm settings' do
+      let(:message) do
+        create(:jmessage,
+               text: '/get_rooms_settings',
+               from: 'from',
+               chat:)
+      end
+      let(:update_message) { create(:jmessage) }
+      let(:update) { create(:jupdate, message:, callback_query: { 'message' => update_message }) }
+
+      it 'show roowms settings keybord' do
+        markup = {
+          inline_keyboard:
+                           [
+                            [{ text: "1", callback_data: "settings_s_rooms_1" },
+                             { text: "2", callback_data: "settings_s_rooms_2" },
+                             { text: "3", callback_data: "settings_s_rooms_3" }],
+                            [{ text: "4", callback_data: "settings_s_rooms_4" },
+                             { text: "5+", callback_data: "settings_s_rooms_5+" },
+                             { text: "Любое", callback_data: "settings_s_rooms_" },
+                             { text: "Назад", callback_data: "back_from_s" }]]
+        }
+
+        expect(client).to receive(:post).with(
+          'editMessageText',
+          message_id: update_message['message_id'],
+          chat_id: t_user.chat_id, text: 'Количество комнат', reply_markup: markup
         )
 
         subject.open
