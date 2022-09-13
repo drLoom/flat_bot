@@ -29,3 +29,12 @@ Layout/DefEndAlignment:
 
 Style/HashSyntax:
   Enabled: true
+
+Layout/FirstArrayElementIndentation:
+  Enabled: true
+
+Layout/ElseAlignment:
+  Enabled: true
+  
+Layout/EndAlignment:
+  Enabled: true

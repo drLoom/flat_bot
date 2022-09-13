@@ -22,9 +22,9 @@ class TUsserNotification < ApplicationRecord
     when '+'
       '↑'
     when '-'
-    '↓'
+      '↓'
     when '='
-    '↑↓'
+      '↑↓'
     else
       nil
     end

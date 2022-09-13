@@ -3,6 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe TelegramBot::Reception do
+  NOTIFICATIONS_TYPES = %w[n c].freeze
+
   describe "#open" do
     subject { described_class.new(client:) }
     let(:client) { double('TelegramBot::Client') }
@@ -54,36 +56,139 @@ RSpec.describe TelegramBot::Reception do
       end
     end
 
-    context 'roowm settings' do
-      let(:message) do
-        create(:jmessage,
-               text: '/get_rooms_settings',
-               from: 'from',
-               chat:)
+    NOTIFICATIONS_TYPES.each do |type|
+      context "room settings #{type}" do
+        let(:message) do
+          create(:jmessage,
+                text: "/get_rooms_settings_#{type}",
+                from: 'from',
+                chat:)
+        end
+        let(:update_message) { create(:jmessage) }
+        let(:update) { create(:jupdate, message:, callback_query: { 'message' => update_message }) }
+
+        it 'show roowms settings keybord' do
+          markup = {
+            inline_keyboard:
+                             [
+                               [{ text: "1", callback_data: "settings_#{type}_rooms_1" },
+                                { text: "2", callback_data: "settings_#{type}_rooms_2" },
+                                { text: "3", callback_data: "settings_#{type}_rooms_3" }],
+                              [{ text: "4", callback_data: "settings_#{type}_rooms_4" },
+                               { text: "5+", callback_data: "settings_#{type}_rooms_5+" },
+                               { text: "Любое", callback_data: "settings_#{type}_rooms_" },
+                               { text: "Назад", callback_data: "back_from_#{type}" }]]
+          }
+
+          expect(client).to receive(:post).with(
+            'editMessageText',
+            message_id: update_message['message_id'],
+            chat_id: t_user.chat_id, text: 'Количество комнат', reply_markup: markup
+          )
+
+          subject.open
+        end
       end
-      let(:update_message) { create(:jmessage) }
-      let(:update) { create(:jupdate, message:, callback_query: { 'message' => update_message }) }
+    end
 
-      it 'show roowms settings keybord' do
-        markup = {
-          inline_keyboard:
-                           [
-                            [{ text: "1", callback_data: "settings_s_rooms_1" },
-                             { text: "2", callback_data: "settings_s_rooms_2" },
-                             { text: "3", callback_data: "settings_s_rooms_3" }],
-                            [{ text: "4", callback_data: "settings_s_rooms_4" },
-                             { text: "5+", callback_data: "settings_s_rooms_5+" },
-                             { text: "Любое", callback_data: "settings_s_rooms_" },
-                             { text: "Назад", callback_data: "back_from_s" }]]
-        }
+    NOTIFICATIONS_TYPES.each do |type|
+      context 'area settings' do
+        let(:message) do
+          create(:jmessage,
+                 text: "/get_area_settings_#{type}",
+                 from: 'from',
+                 chat:)
+        end
+        let(:update_message) { create(:jmessage) }
+        let(:update) { create(:jupdate, message:, callback_query: { 'message' => update_message }) }
 
-        expect(client).to receive(:post).with(
-          'editMessageText',
-          message_id: update_message['message_id'],
-          chat_id: t_user.chat_id, text: 'Количество комнат', reply_markup: markup
-        )
+        it 'show area settings keybord' do
+          markup = {
+            inline_keyboard: [
+              [{ text: "<= 30", callback_data: "settings_#{type}_area_l30" },
+                { text: "30-50", callback_data: "settings_#{type}_area_30_50" },
+                { text: "50-80", callback_data: "settings_#{type}_area_50_80" }],
+              [{ text: "80-110", callback_data: "settings_#{type}_area_80_110" },
+                { text: ">110", callback_data: "settings_#{type}_area_g110" },
+                { text: "Любое", callback_data: "settings_#{type}_area_" },
+                { text: "Назад", callback_data: "back_from_#{type}" }]
+            ]
+          }
 
-        subject.open
+          expect(client).to receive(:post).with(
+            'editMessageText',
+            message_id: update_message['message_id'],
+            chat_id: t_user.chat_id, text: 'м²', reply_markup: markup
+          )
+
+          subject.open
+        end
+      end
+    end
+
+    NOTIFICATIONS_TYPES.each do |type|
+      context 'price settings' do
+        let(:message) do
+          create(:jmessage,
+                 text: "/get_price_settings_#{type}",
+                 from: 'from',
+                 chat:)
+        end
+        let(:update_message) { create(:jmessage) }
+        let(:update) { create(:jupdate, message:, callback_query: { 'message' => update_message }) }
+
+        it 'show area settings keybord' do
+          markup = {
+            inline_keyboard: [
+              [{ text: "<= 30", callback_data: "settings_#{type}_price_l30" },
+                { text: "30-70", callback_data: "settings_#{type}_price_30_70" },
+                { text: "70-90", callback_data: "settings_#{type}_price_70_90" }],
+              [{ text: "90-120", callback_data: "settings_#{type}_price_90_120" },
+                { text: ">120", callback_data: "settings_#{type}_price_g120" },
+                { text: "Любая", callback_data: "settings_#{type}_price_" },
+                { text: "Назад", callback_data: "back_from_#{type}" }]
+            ]
+          }
+
+          expect(client).to receive(:post).with(
+            'editMessageText',
+            message_id: update_message['message_id'],
+            chat_id: t_user.chat_id, text: 'Цена', reply_markup: markup
+          )
+
+          subject.open
+        end
+      end
+    end
+
+    NOTIFICATIONS_TYPES.each do |type|
+      context 'price direction settings' do
+        let(:message) do
+          create(:jmessage,
+                 text: "/get_price_direction_settings_#{type}",
+                 from: 'from',
+                 chat:)
+        end
+        let(:update_message) { create(:jmessage) }
+        let(:update) { create(:jupdate, message:, callback_query: { 'message' => update_message }) }
+
+        it 'show area settings keybord' do
+          markup = {
+            inline_keyboard: [
+              [{ text: "↑", callback_data: "settings_#{type}_dprice_+" },
+               { text: "↓", callback_data: "settings_#{type}_dprice_-" },
+               { text: "↑↓", callback_data: "settings_#{type}_dprice_=" }],
+            ]
+          }
+
+          expect(client).to receive(:post).with(
+            'editMessageText',
+            message_id: update_message['message_id'],
+            chat_id: t_user.chat_id, text: 'Направление цены', reply_markup: markup
+          )
+
+          subject.open
+        end
       end
     end
 
@@ -122,6 +227,67 @@ RSpec.describe TelegramBot::Reception do
           )
 
           subject.open
+        end
+      end
+    end
+
+    context 'set settings' do
+      let(:juser) { create(:juser, chat_id: 1) }
+      let(:t_user) { create(:t_user, tid: juser['id'], chat_id: 1) }
+
+      context 'set rooms settings' do
+        NOTIFICATIONS_TYPES.each do |type|
+          context 'rooms setting' do
+            let(:rooms) { '3' }
+            let(:message) do
+              create(:jmessage,
+                     text: "settings_#{type}_rooms_#{rooms}",
+                     from: juser,
+                     user: juser,
+                     chat:)
+            end
+            let(:update_message) { create(:jmessage) }
+            let(:update) { create(:jupdate, message:, callback_query: { 'message' => update_message }) }
+
+
+            it 'save rooms setting' do
+              pds = if type != 'n'
+                      { callback_data: "get_price_direction_settings_#{type}", text: "Направление Цены" }
+                    else
+                      {}
+                    end
+
+              markup = {
+                inline_keyboard: [
+                  [
+                    { text: "Количество комнат", callback_data: "get_rooms_settings_#{type}" },
+                    { text: "м²", callback_data: "get_area_settings_#{type}" }
+                  ],
+                  [
+                    { callback_data: "get_price_settings_#{type}", text: "Цена" },
+                    **pds
+                  ]
+                ],
+                resize_keyboard: true
+              }
+
+              expect(client).to receive(:post).with(
+                'editMessageText',
+                message_id: update_message['message_id'],
+                chat_id: t_user.chat_id, text: "Комнат #{rooms}", reply_markup: markup
+              )
+
+              subject.open
+
+              expect(TUsserNotification.count).to eq(1)
+              user_notification = t_user.notifications.first
+
+              aggregate_failures 'user notification' do
+                expect(user_notification.ntype).to eq(type)
+                expect(user_notification.rooms).to eq(rooms)
+              end
+            end
+          end
         end
       end
     end
