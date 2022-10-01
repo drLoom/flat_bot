@@ -37,3 +37,5 @@ bot_info.txt
 .vscode/
 TAGS
 .DS_Store
+
+coverage

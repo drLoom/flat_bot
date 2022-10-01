@@ -31,7 +31,7 @@ module TelegramBot
             'Изменение цены'
           when 'n'
             'Новые объвления'
-          end
+                    end
 
           client.send_message(chat_id: user.chat_id, text: message, reply_markup: settings_keyboard(type))
         when /get_rooms_settings/
@@ -72,7 +72,7 @@ module TelegramBot
           rooms = cmd[/\d+\+?/]
           # TODO: use 1 for now
           notification = user.notifications.find_by(ntype: type) || user.notifications.new(ntype: type)
-          notification.update!(rooms: rooms)
+          notification.update!(rooms:)
 
           client.post(
             'editMessageText',
@@ -137,7 +137,7 @@ module TelegramBot
              reply_markup: settings_keyboard(type),
           )
         when '/start'
-          ans = client.post(
+          client.post(
             'sendMessage',
             {
               chat_id:      user.chat_id,

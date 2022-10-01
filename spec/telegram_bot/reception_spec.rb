@@ -290,6 +290,187 @@ RSpec.describe TelegramBot::Reception do
           end
         end
       end
+
+      context 'set area settings' do
+        NOTIFICATIONS_TYPES.each do |type|
+          context 'area setting' do
+            let(:area) { 100 }
+            let(:message) do
+              create(:jmessage,
+                     text: "settings_#{type}_area_#{area}",
+                     from: juser,
+                     user: juser,
+                     chat:)
+            end
+            let(:update_message) { create(:jmessage) }
+            let(:update) { create(:jupdate, message:, callback_query: { 'message' => update_message }) }
+
+
+            it 'save area setting' do
+              pds = if type != 'n'
+                      { callback_data: "get_price_direction_settings_#{type}", text: "Направление Цены" }
+                    else
+                      {}
+                    end
+
+              markup = {
+                inline_keyboard: [
+                  [
+                    { text: "Количество комнат", callback_data: "get_rooms_settings_#{type}" },
+                    { text: "м²", callback_data: "get_area_settings_#{type}" }
+                  ],
+                  [
+                    { callback_data: "get_price_settings_#{type}", text: "Цена" },
+                    **pds
+                  ]
+                ],
+                resize_keyboard: true
+              }
+
+              expect(client).to receive(:post).with(
+                'editMessageText',
+                message_id: update_message['message_id'],
+                chat_id: t_user.chat_id, text: "м² #{area}", reply_markup: markup
+              )
+
+              subject.open
+
+              expect(TUsserNotification.count).to eq(1)
+              user_notification = t_user.notifications.first
+
+              aggregate_failures 'user notification' do
+                expect(user_notification.ntype).to eq(type)
+                expect(user_notification.meters.to_i).to eq(area)
+              end
+            end
+          end
+        end
+      end
+
+      context 'set price settings' do
+        NOTIFICATIONS_TYPES.each do |type|
+          context 'area setting' do
+            let(:price) { 50 }
+            let(:message) do
+              create(:jmessage,
+                     text: "settings_#{type}_price_#{price}",
+                     from: juser,
+                     user: juser,
+                     chat:)
+            end
+            let(:update_message) { create(:jmessage) }
+            let(:update) { create(:jupdate, message:, callback_query: { 'message' => update_message }) }
+
+
+            it 'save price setting' do
+              pds = if type != 'n'
+                      { callback_data: "get_price_direction_settings_#{type}", text: "Направление Цены" }
+                    else
+                      {}
+                    end
+
+              markup = {
+                inline_keyboard: [
+                  [
+                    { text: "Количество комнат", callback_data: "get_rooms_settings_#{type}" },
+                    { text: "м²", callback_data: "get_area_settings_#{type}" }
+                  ],
+                  [
+                    { callback_data: "get_price_settings_#{type}", text: "Цена" },
+                    **pds
+                  ]
+                ],
+                resize_keyboard: true
+              }
+
+              expect(client).to receive(:post).with(
+                'editMessageText',
+                message_id: update_message['message_id'],
+                chat_id: t_user.chat_id, text: "Цена #{price}", reply_markup: markup
+              )
+
+              subject.open
+
+              expect(TUsserNotification.count).to eq(1)
+              user_notification = t_user.notifications.first
+
+              aggregate_failures 'user notification' do
+                expect(user_notification.ntype).to eq(type)
+                expect(user_notification.price.to_i).to eq(price)
+              end
+            end
+          end
+        end
+      end
+
+      context 'set price direction settings' do
+        NOTIFICATIONS_TYPES.each do |type|
+          context 'area setting' do
+            let(:price_direction) { '=' }
+            let(:message) do
+              create(:jmessage,
+                     text: "settings_#{type}_dprice_#{price_direction}",
+                     from: juser,
+                     user: juser,
+                     chat:)
+            end
+            let(:update_message) { create(:jmessage) }
+            let(:update) { create(:jupdate, message:, callback_query: { 'message' => update_message }) }
+
+
+            it 'save price_direction setting' do
+              pds = if type != 'n'
+                      { callback_data: "get_price_direction_settings_#{type}", text: "Направление Цены" }
+                    else
+                      {}
+                    end
+
+              markup = {
+                inline_keyboard: [
+                  [
+                    { text: "Количество комнат", callback_data: "get_rooms_settings_#{type}" },
+                    { text: "м²", callback_data: "get_area_settings_#{type}" }
+                  ],
+                  [
+                    { callback_data: "get_price_settings_#{type}", text: "Цена" },
+                    **pds
+                  ]
+                ],
+                resize_keyboard: true
+              }
+
+              expect(client).to receive(:post).with(
+                'editMessageText',
+                message_id: update_message['message_id'],
+                chat_id: t_user.chat_id, text: "Направление цены ↑↓", reply_markup: markup
+              )
+
+              subject.open
+
+              expect(TUsserNotification.count).to eq(1)
+              user_notification = t_user.notifications.first
+
+              aggregate_failures 'user notification' do
+                expect(user_notification.ntype).to eq(type)
+                expect(user_notification.price_direction).to eq(price_direction)
+              end
+            end
+          end
+        end
+      end
+
+      context 'start' do
+        let(:message) { create(:jmessage, text: '/start', from: 'from', chat:) }
+        it 'show initial markup' do
+          markup = { keyboard: [["Настроить нотификации"]], resize_keyboard: true }
+
+          expect(client).to receive(:post).with(
+            'sendMessage', { chat_id: 1, text: "Привет!", reply_markup: markup }
+          )
+
+          subject.open
+        end
+      end
     end
   end
 end
