@@ -45,4 +45,5 @@ group :test do
   gem "faker"
   gem 'database_cleaner-active_record'
   gem 'simplecov', require: false
+  gem 'rails-controller-testing'
 end

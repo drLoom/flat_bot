@@ -1,6 +1,9 @@
-Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+# frozen_string_literal: true
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+Rails.application.routes.draw do
+  namespace :graphs do
+    resources :meter, only: %i[index]
+  end
+
+  root 'graphs/meter#index'
 end

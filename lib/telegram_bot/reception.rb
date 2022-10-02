@@ -16,7 +16,7 @@ module TelegramBot
         dispatcher = Dispatcher.new(update:)
         dispatcher.dispatch
 
-       cmd  = dispatcher.cmd
+       cmd = dispatcher.cmd
 
         case cmd
         when '/stats'
