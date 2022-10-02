@@ -13,15 +13,17 @@ module TelegramBot
 
     def open
       client.get_updates do |update|
-        cmd  = extract_cmd(update)
-        user = extract_user(update)
+        dispatcher = Dispatcher.new(update:)
+        dispatcher.dispatch
+
+       cmd  = dispatcher.cmd
 
         case cmd
         when '/stats'
-          client.send_message(chat_id: user.chat_id, text: prepare_stats, parse_mode: 'MarkdownV2')
+          client.send_message(chat_id: dispatcher.user.chat_id, text: prepare_stats, parse_mode: 'MarkdownV2')
         when '/settings', 'Настроить нотификации'
 
-          client.send_message(chat_id: user.chat_id, text: 'Настройте параметры поиска', reply_markup: notifications_keyboard)
+          client.send_message(chat_id: dispatcher.user.chat_id, text: 'Настройте параметры поиска', reply_markup: notifications_keyboard)
         when /settings_keyboard_\w/
           type = cmd[/settings_keyboard_(\w)/, 1]
           next unless %w[n c].include?(type)
@@ -33,13 +35,13 @@ module TelegramBot
             'Новые объвления'
                     end
 
-          client.send_message(chat_id: user.chat_id, text: message, reply_markup: settings_keyboard(type))
+          client.send_message(chat_id: dispatcher.user.chat_id, text: message, reply_markup: settings_keyboard(type))
         when /get_rooms_settings/
           type = extract_type(cmd)
 
           client.post(
             'editMessageText',
-            chat_id: user.chat_id,
+            chat_id:dispatcher.user.chat_id,
             message_id: update['callback_query']['message']['message_id'],
             text: 'Количество комнат', reply_markup: rooms_keyboard(type)
           )
@@ -49,7 +51,7 @@ module TelegramBot
           client.post(
             'editMessageText',
             message_id:   update['callback_query']['message']['message_id'],
-            chat_id: user.chat_id, text: 'м²', reply_markup: area_keyboard(type)
+            chat_id:dispatcher.user.chat_id, text: 'м²', reply_markup: area_keyboard(type)
           )
         when /get_price_settings/
           type = extract_type(cmd)
@@ -57,7 +59,7 @@ module TelegramBot
           client.post(
             'editMessageText',
             message_id:   update['callback_query']['message']['message_id'],
-            chat_id: user.chat_id, text: 'Цена', reply_markup: price_keyboard(type)
+            chat_id:dispatcher.user.chat_id, text: 'Цена', reply_markup: price_keyboard(type)
           )
         when /get_price_direction_settings/
           type = extract_type(cmd)
@@ -65,18 +67,18 @@ module TelegramBot
           client.post(
             'editMessageText',
             message_id:   update['callback_query']['message']['message_id'],
-            chat_id: user.chat_id, text: 'Направление цены', reply_markup: price_direction_keyboard(type)
+            chat_id:dispatcher.user.chat_id, text: 'Направление цены', reply_markup: price_direction_keyboard(type)
           )
         when /settings_\w_rooms_/
           type = extract_attr_settings(cmd)
           rooms = cmd[/\d+\+?/]
           # TODO: use 1 for now
-          notification = user.notifications.find_by(ntype: type) || user.notifications.new(ntype: type)
+          notification =dispatcher.user.notifications.find_by(ntype: type) ||dispatcher.user.notifications.new(ntype: type)
           notification.update!(rooms:)
 
           client.post(
             'editMessageText',
-             chat_id:      user.chat_id,
+             chat_id:      dispatcher.user.chat_id,
              text:         notification.name,
              message_id:   update['callback_query']['message']['message_id'],
              reply_markup: settings_keyboard(type)
@@ -84,12 +86,12 @@ module TelegramBot
         when /settings_\w_area_/
           type = extract_attr_settings(cmd)
           setting = cmd[/settings_\w_area_(\w+)/, 1]
-          notification = user.notifications.find_by(ntype: type) || user.notifications.new(ntype: type)
+          notification =dispatcher.user.notifications.find_by(ntype: type) ||dispatcher.user.notifications.new(ntype: type)
           notification.update!(meters: setting)
 
           client.post(
             'editMessageText',
-             chat_id:      user.chat_id,
+             chat_id:      dispatcher.user.chat_id,
              text:         notification.name,
              message_id:   update['callback_query']['message']['message_id'],
              reply_markup: settings_keyboard(type)
@@ -97,12 +99,12 @@ module TelegramBot
         when /settings_\w_price_/
           type = extract_attr_settings(cmd)
           setting = cmd[/settings_\w_price_(\w+)/, 1]
-          notification = user.notifications.find_by(ntype: type) || user.notifications.new(ntype: type)
+          notification =dispatcher.user.notifications.find_by(ntype: type) ||dispatcher.user.notifications.new(ntype: type)
           notification.update!(price: setting)
 
           client.post(
             'editMessageText',
-             chat_id:      user.chat_id,
+             chat_id:      dispatcher.user.chat_id,
              text:         notification.name,
              message_id:   update['callback_query']['message']['message_id'],
              reply_markup: settings_keyboard(type)
@@ -110,12 +112,12 @@ module TelegramBot
         when /settings_\w_dprice_.?/
           type = extract_attr_settings(cmd)
           direction = cmd[/.?\z/]
-          notification = user.notifications.find_by(ntype: type) || user.notifications.new(ntype: type)
+          notification =dispatcher.user.notifications.find_by(ntype: type) ||dispatcher.user.notifications.new(ntype: type)
           notification.update!(price_direction: direction)
 
           client.post(
             'editMessageText',
-             chat_id:      user.chat_id,
+             chat_id:      dispatcher.user.chat_id,
              text:         notification.name,
              message_id:   update['callback_query']['message']['message_id'],
              reply_markup: settings_keyboard(type)
@@ -131,7 +133,7 @@ module TelegramBot
 
           client.post(
             'editMessageText',
-             chat_id:      user.chat_id,
+             chat_id:      dispatcher.user.chat_id,
              message_id:   update['callback_query']['message']['message_id'],
              text:         message,
              reply_markup: settings_keyboard(type),
@@ -140,11 +142,11 @@ module TelegramBot
           client.post(
             'sendMessage',
             {
-              chat_id:      user.chat_id,
+              chat_id:      dispatcher.user.chat_id,
               text:         'Привет!',
               reply_markup: {
                 keyboard:        [
-                  [ user.notifications&.first&.name || 'Настроить нотификации'] # TODO: n+1
+                  [dispatcher.user.notifications&.first&.name || 'Настроить нотификации'] # TODO: n+1
                 ],
                 resize_keyboard: true
               }
@@ -160,28 +162,11 @@ module TelegramBot
           object_id = cmd[/onliner\.by.*apartments\/(\d+)/, 1].to_i
           history   = flatt_history(object_id)
 
-          client.send_message(chat_id: user.chat_id, text: prepare_history(history))
+          client.send_message(chat_id:dispatcher.user.chat_id, text: prepare_history(history))
         else
-          client.send_message(chat_id: user.chat_id, text: @anecs.sample)
+          client.send_message(chat_id:dispatcher.user.chat_id, text: @anecs.sample)
         end
       end
-    end
-
-    def extract_cmd(update)
-      if update['message']
-        update['message']['text']
-      elsif update['callback_query']
-        update['callback_query']['data']
-      end
-    end
-
-    def extract_user(update)
-      params = user_info(update['message'] || update['callback_query']['message'])
-      TUser.find_by(params) || TUser.create!(params)
-    end
-
-    def user_info(update)
-      { tid: update['from']['id'], chat_id: update['chat']['id'] }
     end
 
     def notifications_keyboard

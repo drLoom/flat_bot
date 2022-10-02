@@ -35,6 +35,9 @@ Layout/FirstArrayElementIndentation:
 
 Layout/ElseAlignment:
   Enabled: true
-  
+
 Layout/EndAlignment:
+  Enabled: true
+
+Layout/SpaceAroundOperators:
   Enabled: true
