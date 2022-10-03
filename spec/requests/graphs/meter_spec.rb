@@ -11,7 +11,7 @@ RSpec.describe "Graph Meter controller  ", type: :request do
       get "/graphs/meter"
       expect(response).to render_template(:index)
 
-      expect(assigns(:hists)).to eq({ "2022-08-01" => "0.09" }.to_json)
+      expect(assigns(:hists)).to eq([{ "avg" => "0.09","count":2,"date" => "2022-08-01","id" => nil }].to_json)
     end
   end
 end

@@ -13,30 +13,43 @@ export default class extends Controller {
     const data = JSON.parse(this.statsTarget.textContent);
 
     Highcharts.chart(this.element, {
-      chart: {
-        type: 'spline'
-      },
       title: {
         text: 'м² $'
       },
       xAxis: {
-        categories: Object.keys(data),
+        categories: data.map(el => el.date),
         accessibility: {
           description: 'Date'
         }
       },
-      yAxis: {
-        title: {
-          text: 'м²'
-        },
-        labels: {
-          formatter: function () {
-            return this.value + '$';
+      yAxis: [
+        {
+          title: {
+            text: 'м²'
+          },
+          labels: {
+            formatter: function () {
+              return this.value + '$';
+            }
           }
-        }
-      },
+        },
+        { // Secondary yAxis
+          title: {
+            text: 'Кол-во квартир',
+            style: {
+              color: Highcharts.getOptions().colors[0]
+            }
+          },
+          labels: {
+            format: '{value}',
+            style: {
+              color: Highcharts.getOptions().colors[0]
+            }
+          },
+          opposite: true
+        }],
       tooltip: {
-        crosshairs: true,
+        crosshairs: false,
         shared: true
       },
       plotOptions: {
@@ -48,13 +61,22 @@ export default class extends Controller {
           }
         }
       },
-      series: [{
-        name: 'м²',
-        marker: {
-          symbol: 'square'
+      series: [
+        {
+          name: 'м²',
+          type: 'spline',
+          marker: {
+            symbol: 'square'
+          },
+          data: data.map(el => Math.round(Number(el.avg)))
         },
-        data: Object.values(data).map(x => Math.round(Number(x), 2))
-      }]
+        {
+          type: 'column',
+          yAxis: 1,
+          name: 'Кол-во квартир',
+          data: data.map(el => el.count)
+        }
+      ]
     });
   }
 }
