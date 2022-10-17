@@ -2,6 +2,8 @@
 
 module Graphs
   class MeterController < ApplicationController
+    layout 'theme'
+
     def index
       @hists = Rails.cache.fetch("MeterController#hists", expires_in: 1.hours) do
         FlatsHist.group(:date)

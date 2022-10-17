@@ -21,6 +21,8 @@ gem 'ed25519'
 gem 'bcrypt_pbkdf'
 gem 'god'
 gem 'timeout', '~> 0.1.1'
+gem 'sassc-rails'
+gem 'bootstrap', '~> 5.2.2'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
