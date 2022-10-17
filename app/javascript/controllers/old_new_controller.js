@@ -1,5 +1,5 @@
 import Highcharts from 'highcharts';
-import ChartDataController from './chart_data_controller';
+import ChartDataController from 'controllers/chart_data_controller';
 
 
 export default class extends ChartDataController {
