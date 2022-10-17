@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+Gemfilesource "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.1.2"
@@ -23,7 +23,6 @@ gem 'god'
 gem 'timeout', '~> 0.1.1'
 gem 'sassc-rails'
 gem 'bootstrap', '~> 5.2.2'
-gem 'execjs'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
