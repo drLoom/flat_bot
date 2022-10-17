@@ -1,17 +1,8 @@
-import { Controller } from "@hotwired/stimulus"
-
-// import * as Highcharts from 'highcharts';
 import Highcharts from 'highcharts';
+import ChartDataController from './chart_data_controller';
 
-// import Exporting from 'highcharts/modules/exporting';
-// Exporting(Highcharts);
-
-export default class extends Controller {
-  static targets = ["stats"];
-
-  connect() {
-    const data = JSON.parse(this.statsTarget.textContent);
-
+export default class extends ChartDataController {
+  drawChart(data) {
     Highcharts.chart(this.element, {
       title: {
         text: 'м² $'
@@ -40,6 +31,7 @@ export default class extends Controller {
               color: Highcharts.getOptions().colors[0]
             }
           },
+          max: 50000,
           labels: {
             format: '{value}',
             style: {
@@ -56,7 +48,6 @@ export default class extends Controller {
         spline: {
           marker: {
             radius: 4,
-            lineColor: '#666666',
             lineWidth: 1
           }
         }
@@ -65,6 +56,8 @@ export default class extends Controller {
         {
           name: 'м²',
           type: 'spline',
+          color: '#FC6A03',
+          zIndex: 1,
           marker: {
             symbol: 'square'
           },
@@ -73,8 +66,10 @@ export default class extends Controller {
         {
           type: 'column',
           yAxis: 1,
+          zIndex: 0,
           name: 'Кол-во квартир',
-          data: data.map(el => el.count)
+          data: data.map(el => el.count),
+          color: '#028A0F'
         }
       ]
     });

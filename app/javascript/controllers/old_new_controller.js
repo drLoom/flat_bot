@@ -1,12 +1,9 @@
-import { Controller } from "@hotwired/stimulus"
 import Highcharts from 'highcharts';
+import ChartDataController from './chart_data_controller';
 
-export default class extends Controller {
-  static targets = ["stats"];
 
-  connect() {
-    const data = JSON.parse(this.statsTarget.textContent);
-
+export default class extends ChartDataController {
+  drawChart(data) {
     Highcharts.chart(this.element, {
       title: {
         text: 'Новые и снятые объявления'
@@ -63,7 +60,7 @@ export default class extends Controller {
           marker: {
             symbol: 'square'
           },
-          color: '#FF0000',
+          color: '#FC6A03',
           data: data.map(el => el.old_cnt)
         },
         {

@@ -2,9 +2,10 @@
 
 Rails.application.routes.draw do
   namespace :graphs do
+    resources :charts, only: %i[index]
     resources :meter, only: %i[index]
     resources :old_new, only: %i[index]
   end
 
-  root 'graphs/meter#index'
+  root 'graphs/charts#index'
 end

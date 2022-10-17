@@ -10,6 +10,10 @@ module Graphs
                  .select('AVG(price_usd / area), COUNT(id), date')
                  .to_json
       end
+
+      respond_to do |format|
+         format.json { render json: @hists }
+       end
     end
   end
 end
