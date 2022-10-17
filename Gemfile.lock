@@ -355,6 +355,7 @@ DEPENDENCIES
   database_cleaner-active_record
   debug
   ed25519
+  execjs
   factory_bot_rails
   faker
   faraday
