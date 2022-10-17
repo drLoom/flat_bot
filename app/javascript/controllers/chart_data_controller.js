@@ -4,7 +4,6 @@ export default class ChartDataController extends Controller {
   static values = { url: String };
 
   connect() {
-    console.log(this.urlValue);
     fetch(this.urlValue, { headers: {'Accept': 'application/json'}})
       .then(response => response.json()).then((data) => this.drawChart(data));
   }
