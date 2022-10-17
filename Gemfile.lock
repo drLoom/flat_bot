@@ -1,5 +1,4 @@
 GEM
-  remote: https://rubygems.org/
   specs:
     actioncable (7.0.3.1)
       actionpack (= 7.0.3.1)
@@ -355,7 +354,6 @@ DEPENDENCIES
   database_cleaner-active_record
   debug
   ed25519
-  execjs
   factory_bot_rails
   faker
   faraday
