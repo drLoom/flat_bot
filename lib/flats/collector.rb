@@ -43,6 +43,7 @@ module Flats
       results.each do |r|
         flat = ::FlatsHist.find_by(date: r[:date], object_id: r[:object_id]) || ::FlatsHist.new
         flat.update(r)
+        flat.internal_id = flat.hash_internal_key
         flat.save
       end
     end

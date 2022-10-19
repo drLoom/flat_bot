@@ -5,6 +5,11 @@ namespace :flats do
   task collect: :environment do
     Flats::Collector.new.collect
   end
+
+  desc 'Set internal_od'
+  task set_internal_id: :environment do
+    Flats::SetInternalId.new.call
+  end
 end
 
 namespace :t_bot do

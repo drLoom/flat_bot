@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     resources :charts, only: %i[index]
     resources :meter, only: %i[index]
     resources :old_new, only: %i[index]
+    resources :doubles, only: %i[index]
   end
 
   root 'graphs/charts#index'

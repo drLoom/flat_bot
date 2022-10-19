@@ -81,4 +81,12 @@ class FlatsHist < ApplicationRecord
   def meter_price_usd
     price_usd / area
   end
+
+  def internal_id_key
+    [adress, rooms, floor, area].join
+  end
+
+  def hash_internal_key
+    XXhash.xxh32(internal_id_key)
+  end
 end

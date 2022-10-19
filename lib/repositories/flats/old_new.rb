@@ -3,9 +3,6 @@
 module Repositories
   module Flats
     class OldNew
-      def initialize
-      end
-
       def call
         sql = <<~SQL
           with old_new as (
