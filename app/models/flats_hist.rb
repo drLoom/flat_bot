@@ -89,4 +89,8 @@ class FlatsHist < ApplicationRecord
   def hash_internal_key
     XXhash.xxh32(internal_id_key)
   end
+
+  def img_key
+    XXhash.xxh32(photo)
+  end
 end

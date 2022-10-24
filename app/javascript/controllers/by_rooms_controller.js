@@ -13,7 +13,7 @@ export default class extends ChartDataController {
 
     Highcharts.chart(this.element, {
       title: {
-        text: 'м² $* '
+        text: 'м² $'
       },
       xAxis: {
         categories: data.map(el => el.date),

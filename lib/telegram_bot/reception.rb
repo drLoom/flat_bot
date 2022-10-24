@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'dispatcher'
+
 module TelegramBot
   class Reception
     include ActionView::Helpers::NumberHelper

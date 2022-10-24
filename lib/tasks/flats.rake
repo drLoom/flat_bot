@@ -10,6 +10,11 @@ namespace :flats do
   task set_internal_id: :environment do
     Flats::SetInternalId.new.call
   end
+
+  desc 'Set img_id'
+  task set_img_id: :environment do
+    Flats::SetInternalId.new.img_id
+  end
 end
 
 namespace :t_bot do
