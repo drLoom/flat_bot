@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+  # frozen_string_literal: true
 
 God.pid_file_directory = File.expand_path('../../../tmp/god_pids', __FILE__)
 God.watch do |w|

@@ -9,5 +9,9 @@ Rails.application.routes.draw do
     resources :by_rooms, only: %i[index]
   end
 
+  namespace :stats do
+    get :totals, to: 'main_page#totals'
+  end
+
   root 'graphs/charts#index'
 end
