@@ -6,7 +6,11 @@ Rails.application.routes.draw do
     resources :meter, only: %i[index]
     resources :old_new, only: %i[index]
     resources :doubles, only: %i[index]
-    resources :by_rooms, only: %i[index]
+    resources :by_rooms, only: %i[index] do
+      collection do
+        get :split
+      end
+    end
   end
 
   namespace :stats do
