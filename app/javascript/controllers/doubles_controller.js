@@ -1,5 +1,6 @@
 import Highcharts from 'highcharts';
 import ChartDataController from 'controllers/chart_data_controller';
+import { COLORS } from '../settings/colors';
 
 
 export default class extends ChartDataController {
@@ -57,7 +58,7 @@ export default class extends ChartDataController {
         {
           name: 'Дубли',
           type: 'spline',
-          color: '#FC6A03',
+          color: COLORS.ORANGE,
           data: data.map(el => Number(el.doubles))
         },
       ]

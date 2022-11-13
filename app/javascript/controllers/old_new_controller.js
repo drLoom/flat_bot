@@ -1,5 +1,6 @@
 import Highcharts from 'highcharts';
 import ChartDataController from 'controllers/chart_data_controller';
+import { COLORS } from '../settings/colors';
 
 
 export default class extends ChartDataController {
@@ -58,15 +59,15 @@ export default class extends ChartDataController {
           name: 'Снятые объявления',
           type: 'spline',
           marker: {
-            symbol: 'square'
+            symbol: 'round'
           },
-          color: '#FC6A03',
+          color: COLORS.ORANGE,
           data: data.map(el => el.old_cnt)
         },
         {
           type: 'spline',
           name: 'Новые обявления',
-          color: '#028A0F',
+          color: COLORS.BLUE,
           data: data.map(el => el.new_cnt)
         }
       ]

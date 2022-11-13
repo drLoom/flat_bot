@@ -1,5 +1,6 @@
 import Highcharts from 'highcharts';
 import ChartDataController from 'controllers/chart_data_controller';
+import { COLORS } from '../settings/colors';
 
 export default class extends ChartDataController {
   drawChart(data) {
@@ -16,7 +17,7 @@ export default class extends ChartDataController {
       yAxis: [
         {
           title: {
-            text: 'м²'
+            text: '$м²'
           },
           labels: {
             formatter: function () {
@@ -54,12 +55,12 @@ export default class extends ChartDataController {
       },
       series: [
         {
-          name: 'м²',
+          name: '$м²',
           type: 'spline',
-          color: '#FC6A03',
+          color: COLORS.ORANGE,
           zIndex: 1,
           marker: {
-            symbol: 'square'
+            symbol: 'round'
           },
           data: data.map(el => Math.round(Number(el.avg)))
         },
@@ -69,7 +70,7 @@ export default class extends ChartDataController {
           zIndex: 0,
           name: 'Кол-во квартир',
           data: data.map(el => el.count),
-          color: '#028A0F'
+          color: COLORS.BLUE
         }
       ]
     });
