@@ -3,7 +3,11 @@
 Rails.application.routes.draw do
   namespace :graphs do
     resources :charts, only: %i[index]
-    resources :meter, only: %i[index]
+    resources :meter, only: %i[index] do
+      collection do
+        get :inc_dec
+      end
+    end
     resources :old_new, only: %i[index]
     resources :doubles, only: %i[index]
     resources :by_rooms, only: %i[index] do

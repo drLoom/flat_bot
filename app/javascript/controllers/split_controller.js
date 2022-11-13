@@ -4,8 +4,6 @@ import ChartDataController from 'controllers/chart_data_controller';
 export default class extends ChartDataController {
 
   drawChart(data) {
-    console.log(data);
-
     Highcharts.chart(this.element, {
       chart: {
         plotBackgroundColor: null,
