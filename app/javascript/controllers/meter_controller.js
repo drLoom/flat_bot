@@ -1,6 +1,6 @@
 import Highcharts from 'highcharts';
 import ChartDataController from 'controllers/chart_data_controller';
-import { COLORS } from '../settings/colors';
+import { COLORS } from 'settings/colors';
 
 export default class extends ChartDataController {
   drawChart(data) {

@@ -2,3 +2,4 @@
 import "@hotwired/turbo-rails"
 import "highcharts"
 import "controllers"
+import "settings/colors"
