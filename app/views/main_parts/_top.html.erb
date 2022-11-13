@@ -1,0 +1,17 @@
+
+<div class="col-md-10 col-lg-10 order-1 mb-4">
+  <div class="card h-100">
+    <div class="card-header">
+      <ul class="nav nav-pills" role="tablist">
+        <% [1, 2, 3, 4, 5].each do |rooms| %>
+          <li class="nav-item">
+            <%= link_to(top_flats_path(rooms: rooms), data: { turbo_frame: "top_flats" }) do %>
+              <button type="button" class="nav-link" role="tab"><%= rooms %></button>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <%= turbo_frame_tag 'top_flats', src: top_flats_path(rooms: 1) %>
+  </div>
+</div>

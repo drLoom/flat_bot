@@ -1,0 +1,29 @@
+<%= turbo_frame_tag 'top_flats' do %>
+  <div class="card">
+    <h5 class="card-header">Striped rows</h5>
+    <div class="table-responsive text-nowrap">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Адрес</th>
+            <th>Цена</th>
+            <th>Цена м²</th>
+            <th>Плошадь</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          <% @top_flats.each do |flat| %>
+            <tr>
+              <td>
+                <%= link_to(flat.adress, flat.url, target: '_blank') %>
+              </td>
+              <td><%= number_to_currency(flat.price_usd, precision: 0, delimiter: ' ') %></td>
+              <td><%= flat.meter_price_usd.round %></td>
+              <td><%= flat.area %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

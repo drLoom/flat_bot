@@ -13,5 +13,7 @@ Rails.application.routes.draw do
     get :totals, to: 'main_page#totals'
   end
 
+  get :top_flats, to: 'tops#top_flats'
+
   root 'graphs/charts#index'
 end
