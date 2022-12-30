@@ -23,7 +23,7 @@ module Flats
     end
 
     def url(page_num)
-      "https://r.onliner.by/pk/#bounds%5Blb%5D%5Blat%5D=53.7935409055208&bounds%5Blb%5D%5Blong%5D=27.38815696396424&bounds%5Brt%5D%5Blat%5D=54.018251789403934&bounds%5Brt%5D%5Blong%5D=27.779563729488906"
+      "https://r.onliner.by/sdapi/pk.api/search/apartments?bounds%5Blb%5D%5Blat%5D=53.88298458332238&bounds%5Blb%5D%5Blong%5D=27.358935203978554&bounds%5Brt%5D%5Blat%5D=53.92896889700679&bounds%5Brt%5D%5Blong%5D=27.80854351167143&page=#{page_num}&v=0.5423097444380389"
     end
 
     def parse(row)
