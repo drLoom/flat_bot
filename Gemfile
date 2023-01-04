@@ -24,6 +24,7 @@ gem 'timeout', '~> 0.1.1'
 gem 'sassc-rails'
 gem 'bootstrap', '~> 5.2.2'
 gem 'xxhash'
+gem 'devise'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]

@@ -135,6 +135,15 @@
 
           <ul class="menu-inner py-1">
             <!-- Dashboard -->
+            <% if user_signed_in? %>
+              <li class="menu-item active">
+                <a href="<%= star_index_path %>" class="menu-link">
+                  <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                  <div data-i18n="Analytics">Star</div>
+                </a>
+              </li>
+            <% end %>
+
             <li class="menu-item active">
               <a href="index.html" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>

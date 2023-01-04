@@ -6,24 +6,34 @@ require 'nokogiri'
 module Flats
   class Collector
     def collect
-      page_num = 1
+      urls.each do |link|
+        page_num = 1
 
-      loop do
-        response = Faraday.get(url(page_num))
-        json = JSON.parse(response.body)
+        loop do
+          response = Faraday.get(url(link, page_num))
+          json = JSON.parse(response.body)
 
-        results = json['apartments'].map { |r| parse(r) }
-        save_results(results)
+          results = json['apartments'].map { |r| parse(r) }
+          save_results(results)
 
-        Rails.logger.info "DONE #{page_num} / #{json['page']['last']}"
-        break if json['page']['last'] == json['page']['current']
+          Rails.logger.info "DONE #{page_num} / #{json['page']['last']}"
+          break if json['page']['last'] == json['page']['current']
 
-        page_num += 1
+          page_num += 1
+          puts page_num
+        end
       end
     end
 
-    def url(page_num)
-      "https://r.onliner.by/sdapi/pk.api/search/apartments?bounds%5Blb%5D%5Blat%5D=53.88298458332238&bounds%5Blb%5D%5Blong%5D=27.358935203978554&bounds%5Brt%5D%5Blat%5D=53.92896889700679&bounds%5Brt%5D%5Blong%5D=27.80854351167143&page=#{page_num}&v=0.5423097444380389"
+    def url(link, page_num)
+      link.sub('page_num', page_num.to_s)
+    end
+
+    def urls
+      [
+        "https://r.onliner.by/sdapi/pk.api/search/apartments?bounds%5Blb%5D%5Blat%5D=53.7554973999277&bounds%5Blb%5D%5Blong%5D=27.426064222141026&bounds%5Brt%5D%5Blat%5D=54.04034713456713&bounds%5Brt%5D%5Blong%5D=27.698222954691232&page=page_num&v=0.6375370292616709",
+        "https://r.onliner.by/sdapi/pk.api/search/apartments?bounds%5Blb%5D%5Blat%5D=53.88298458332238&bounds%5Blb%5D%5Blong%5D=27.358935203978554&bounds%5Brt%5D%5Blat%5D=53.92896889700679&bounds%5Brt%5D%5Blong%5D=27.80854351167143&page=page_num&v=0.5423097444380389"
+      ]
     end
 
     def parse(row)

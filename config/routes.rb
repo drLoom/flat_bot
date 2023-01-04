@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  devise_for :users
+
   namespace :graphs do
     resources :charts, only: %i[index]
     resources :meter, only: %i[index] do
@@ -16,6 +18,8 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  resources :star, only: %i[index create]
 
   namespace :stats do
     get :totals, to: 'main_page#totals'
