@@ -48,8 +48,9 @@ class FlatsHist < ApplicationRecord
   scope :recent, -> { where(date: last_date) }
   scope :newly, -> do
     recent
-     .where.not(object_id: FlatsHist.where(date: ((last_date - 8)...last_date)).select(:object_id))
-     .where('created_at = updated_at')
+      .where(
+      object_id: select(:object_id).having("MIN(date) >= '#{last_date}'").group(:object_id)
+    )
   end
 
   has_one :previous_price,
