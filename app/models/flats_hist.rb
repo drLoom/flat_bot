@@ -45,13 +45,7 @@ class FlatsHist < ApplicationRecord
     end
   end
 
-  scope :recent, -> { where(date: last_date) }
-  scope :newly, -> do
-    recent
-      .where(
-      object_id: select(:object_id).having("MIN(date) >= '#{last_date}'").group(:object_id)
-    )
-  end
+  has_one :star, class_name: 'Star', foreign_key: :object_id, primary_key: :object_id
 
   has_one :previous_price,
     -> { where(date: FlatsHist.distinct.select(:date).order(date: :desc).limit(1).offset(1)) },
@@ -63,12 +57,25 @@ class FlatsHist < ApplicationRecord
       .where('flats_hist.price_usd <> previous_prices_flats_hist.price_usd')
   end
 
+  scope :recent, -> { where(date: last_date) }
+  scope :newly, -> do
+    recent
+      .where(
+      object_id: select(:object_id).having("MIN(date) >= '#{last_date}'").group(:object_id)
+    )
+  end
+  scope :latest, -> { where("(object_id, date) IN (#{max_date_per_object_id.to_sql})") }
+  scope :max_date_per_object_id, -> { select(:object_id, 'max(date) max_date').group(:object_id) }
+
+  scope :begined, -> { where("(object_id, date) IN (#{min_date_per_object_id.to_sql})") }
+  scope :min_date_per_object_id, -> { select(:object_id, 'min(date) min_date').group(:object_id) }
+
   def photo
     data['photo']
   end
 
   def adress
-    data['location']['address']
+    data['location']['address'].presence || data['location']['user_address']
   end
 
   def floor
