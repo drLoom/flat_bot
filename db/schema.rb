@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_03_204335) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_10_140131) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,6 +29,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_03_204335) do
     t.bigint "img_id"
     t.index ["date", "id"], name: "index_flats_hist_on_date_and_id", unique: true
     t.index ["date", "object_id"], name: "index_flats_hist_on_date_and_object_id", unique: true
+    t.index ["object_id", "date"], name: "index_flats_hist_on_object_id_and_date"
   end
 
   create_table "stars", force: :cascade do |t|
