@@ -19,7 +19,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :star, only: %i[index create]
+  resources :star, only: %i[index new create destroy] do
+    collection do
+      get :table
+      get :stars_graphs
+    end
+  end
 
   namespace :stats do
     get :totals, to: 'main_page#totals'

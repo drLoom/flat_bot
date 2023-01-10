@@ -5,3 +5,12 @@
 .add_star_form {
   margin-top: 50px;
 }
+
+
+a.star-delete,
+a.star-delete:hover,
+a.star-delete:visited,
+a.star-delete:active {
+  color: inherit;
+  text-decoration: none;
+}

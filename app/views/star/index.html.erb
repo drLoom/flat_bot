@@ -1,39 +1,8 @@
-<%= form_tag url_for(action: 'create'), class: 'add_star_form', method: "post" do %>
-  <%= label_tag 'Flat URL', nil, class: 'form-label' %>
-  <%= text_field_tag 'url', nil, class: 'form-control', placeholder: 'https://r.onliner.by/pk/apartments/' %>
-  <%= submit_tag "Add", class: 'btn btn-primary' %>
-<% end %>
+<div data-controller='stars'>
+  <%= turbo_frame_tag 'add_url', src: new_star_path %>
 
-<div class="card stars-card">
-  <h5 class="card-header">Bordered Table</h5>
-  <div class="card-body">
-    <div class="table-responsive text-nowrap">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Адресс</th>
-            <th>Площадь</th>
-            <th>Комнат</th>
-            <th>Цена</th>
-            <th>Цена м²</th>
-            <th>Размещено</th>
-            <th>Обновлено</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @stars.each do |star| %>
-            <tr>
-              <td><%= star.latest_hist&.adress %></td>
-              <td><%= star.latest_hist&.area %></td>
-              <td><%= star.latest_hist&.rooms %></td>
-              <td><%= star.latest_hist&.price %></td>
-              <td><%= star.latest_hist&.meter_price_usd&.round(2) %></td>
-              <td><%= star.begined_hist&.date %></td>
-              <td><%= star.latest_hist&.date %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <%= turbo_frame_tag 'stars_table', src: table_star_index_path, data: { 'stars-target': 'starsTable' } %>
+
+
+  <%= render 'graphs' %>
 </div>
