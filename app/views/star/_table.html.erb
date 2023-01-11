@@ -21,15 +21,15 @@
             <% @stars.each do |star| %>
               <tr>
                 <td>
-                  <%= link_to(star.latest_hist&.adress, star.latest_hist&.url, target: '_blank') %>
+                  <%= link_to(star.flat_view&.latest_hist&.adress, star.flat_view&.latest_hist&.url, target: '_blank') %>
                 </td>
                 <td><%= star.object_id %></td>
-                <td><%= star.latest_hist&.area %></td>
-                <td><%= star.latest_hist&.rooms&.round %></td>
-                <td><%= number_to_currency(star.latest_hist&.price_usd, precision: 0, delimiter: ' ') %></td>
-                <td><%= number_to_currency(star.latest_hist&.meter_price_usd, precision: 0, delimiter: ' ') %></td>
-                <td><%= star.begined_hist&.date %></td>
-                <td><%= star.latest_hist&.date %></td>
+                <td><%= star.flat_view&.latest_hist&.area %></td>
+                <td><%= star.flat_view&.latest_hist&.rooms&.round %></td>
+                <td><%= number_to_currency(star.flat_view&.latest_hist&.price_usd, precision: 0, delimiter: ' ') %></td>
+                <td><%= number_to_currency(star.flat_view&.latest_hist&.meter_price_usd, precision: 0, delimiter: ' ') %></td>
+                <td><%= star.flat_view&.begined_hist&.date %></td>
+                <td><%= star.flat_view&.latest_hist&.date %></td>
                 <td>
                   <%= link_to star_path(star), class: 'star-delete', data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } do %>
                     <i class="fa fa-trash"></i>

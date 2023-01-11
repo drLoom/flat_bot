@@ -64,12 +64,7 @@ class FlatsHist < ApplicationRecord
       object_id: select(:object_id).having("MIN(date) >= '#{last_date}'").group(:object_id)
     )
   end
-  scope :latest, -> { where("(object_id, date) IN (#{max_date_per_object_id.to_sql})") }
-  scope :max_date_per_object_id, -> { select(:object_id, 'max(date) max_date').group(:object_id) }
-
-  scope :begined, -> { where("(object_id, date) IN (#{min_date_per_object_id.to_sql})") }
-  scope :min_date_per_object_id, -> { select(:object_id, 'min(date) min_date').group(:object_id) }
-
+  
   def photo
     data['photo']
   end

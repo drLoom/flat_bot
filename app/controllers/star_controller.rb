@@ -58,7 +58,7 @@ class StarController < ApplicationController
 
   def get_stars
     Rails.cache.fetch(cache_key, expires_in: 1.hours) do
-      Star.includes(:latest_hist, :begined_hist).where(user: current_user)
+      Star.includes(flat_view: [:latest_hist, :begined_hist]).where(user: current_user)
     end
   end
 
