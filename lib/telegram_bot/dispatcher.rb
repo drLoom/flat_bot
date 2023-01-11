@@ -32,7 +32,7 @@ module TelegramBot
     private
 
     def message_from_update
-      update_message || callback_query['message']
+      update_message || callback_query&.[]('message') || update['my_chat_member']
     end
 
     def message?
