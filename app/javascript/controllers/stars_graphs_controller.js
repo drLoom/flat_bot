@@ -4,76 +4,72 @@ import { COLORS } from 'settings/colors';
 
 
 export default class extends ChartDataController {
-  COLORS = ['#131414', '#17a3a3', '#f0074d', '#1923e3', '#23752e', '#c4320e','#dc85ed'];
+  COLORS = ['#131414', '#17a3a3', '#f0074d', '#1923e3', '#23752e', '#c4320e', '#dc85ed'];
 
   drawChart(data) {
+    data = data.map(el => {
+      el.date = new Date(el.date);
+      return el
+    });
+
     const series = data.reduce(((grouped, row) => {
       grouped[row.object_id] ||= [];
       grouped[row.object_id].push(row);
       return grouped;
     }), {});
 
+    const dateFormat = '%e-%m-%y';
+
     Highcharts.chart(this.element, {
+      chart: {
+        type: 'spline'
+      },
       title: {
-        text: 'м² $'
+        text: 'Цена $м² выбранных квартир'
       },
       xAxis: {
-        categories: Array.from(new Set(data.map(el => el.date).sort())),
-        accessibility: {
-          description: 'Date'
+        type: 'datetime',
+        dateTimeLabelFormats: {
+          millisecond: dateFormat,
+          second: dateFormat,
+          minute: dateFormat,
+          hour: dateFormat,
+          day: dateFormat,
+          week: dateFormat,
+          month: dateFormat,
+          year: dateFormat
+        },
+        title: {
+          text: 'Датa'
         }
       },
-      yAxis: [
-        { // Secondary yAxis
-          title: {
-            text: 'Количество квартир',
-            style: {
-              color: Highcharts.getOptions().colors[0]
-            }
-          },
-          max: 25000,
-          labels: {
-            format: '{value}',
-            style: {
-              color: Highcharts.getOptions().colors[0]
-            }
-          },
+      yAxis: {
+        title: {
+          text: '$м²'
         },
-        {
-          title: {
-            text: '<b>м² $</b>'
-          },
-          labels: {
-            formatter: function () {
-              return this.value + '$';
-            }
-          },
-          opposite: true
-        }
-        ],
+        min: 0
+      },
       tooltip: {
-        crosshairs: false,
-        shared: true
+        headerFormat: '<b>{series.name}</b><br>',
+        pointFormat: '{point.x:%Y %e. %b}: {point.y:.1f} $м²'
       },
       plotOptions: {
-        spline: {
+        series: {
           marker: {
-            radius: 4,
-            lineWidth: 1
+            enabled: false,
           }
         }
       },
+      colors: COLORS,
       series: Object.keys(series).map((object_id, i) => {
-        return [{
-            name: object_id,
-            type: 'spline',
-            yAxis: 1,
-            zIndex: 1,
-            color: this.COLORS[i],
-            data: series[object_id].map(row => Math.round(Number(row.meter_price)))
-          },
-        ];
-      }).flat()
-    });
+        return {
+          name: `${object_id}`,
+          lineWidth: 1.5,
+          data: series[object_id].map(row => {
+            return [row.date.getTime(), Number(parseFloat(row.meter_price).toFixed(1))]
+          }),
+        }
+      })
+    })
   }
-}
+};
