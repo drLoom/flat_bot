@@ -18,7 +18,7 @@ export default class extends ChartDataController {
         text: 'м² $'
       },
       xAxis: {
-        categories: data.map(el => el.date),
+        categories: Array.from(new Set(data.map(el => el.date).sort())),
         accessibility: {
           description: 'Date'
         }
