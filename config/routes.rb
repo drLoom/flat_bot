@@ -30,7 +30,9 @@ Rails.application.routes.draw do
     get :totals, to: 'main_page#totals'
   end
 
-  get :top_flats, to: 'tops#top_flats'
+  %i[top_flats top_newly].each do |act|
+    get act, to: "tops##{act}"
+  end
 
   root 'graphs/charts#index'
 end

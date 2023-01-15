@@ -1,6 +1,6 @@
-<%= turbo_frame_tag 'top_flats' do %>
+<%= turbo_frame_tag 'top_newly' do %>
   <div class="card">
-    <h5 class="card-header">Самые дорогие</h5>
+    <h5 class="card-header">Новые объявления</h5>
     <div class="table-responsive text-nowrap">
       <table class="table table-striped">
         <thead>
@@ -12,7 +12,7 @@
           </tr>
         </thead>
         <tbody class="table-border-bottom-0">
-          <% @top_flats.each do |flat| %>
+          <% @top_newly.each do |flat| %>
             <tr>
               <td>
                 <%= link_to(flat.adress, flat.url, target: '_blank') %>

@@ -44,6 +44,18 @@ namespace :t_bot do
   end
 end
 
+namespace :cache do
+  desc 'warm controllers'
+  task 'warm_controllers' => :environment do
+    %w[1 2 3 4 5].each do |rooms|
+      tc = TopsController.new
+      tc.params = { rooms: rooms }
+      tc.top_newly
+      tc.top_flats
+    end
+  end
+end
+
 namespace :test do
   desc 'Test'
   task test: :environment do
