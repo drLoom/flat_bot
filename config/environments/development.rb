@@ -71,4 +71,6 @@ Rails.application.configure do
   # logger           = ActiveSupport::Logger.new($stdout)
   # logger.formatter = config.log_formatter
   # config.logger    = ActiveSupport::TaggedLogging.new(logger)
+
+  config.host = '127.0.0.1:3000'
 end
