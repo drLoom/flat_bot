@@ -21,7 +21,7 @@ class CacheWarm
     paths.each do |path|
       url = "http://#{host}#{path}"
 
-      #touch_cache(url)
+      touch_cache(url)
     end
 
     %w[/top_flats /top_newly].each do |path|
