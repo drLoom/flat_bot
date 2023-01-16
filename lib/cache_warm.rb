@@ -36,7 +36,7 @@ class CacheWarm
   private
 
   def touch_cache(url)
-    put url
+    puts url
     response = Faraday.get(url)
     raise "#{url} failed" unless response.status == 200
   end
