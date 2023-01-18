@@ -12,6 +12,7 @@ class CacheWarm
     paths = %w[
       /graphs/charts
       /graphs/meter
+      /graphs/meter/inc_dec
       /graphs/old_new
       /graphs/doubles
       /graphs/by_rooms/split
@@ -37,7 +38,14 @@ class CacheWarm
 
   def touch_cache(url)
     puts url
-    response = Faraday.get(url)
+    response = faraday.get(url)
+
     raise "#{url} failed" unless response.status == 200
+  end
+
+  def faraday
+    @faraday ||= Faraday.new do |conn|
+      conn.options.timeout = 300
+    end
   end
 end
