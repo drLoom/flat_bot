@@ -1,0 +1,35 @@
+<%= turbo_frame_tag 'history_table' do %>
+  <div class="card stars-card">
+    <h5 class="card-header">История Цены</h5>
+    <div class="card-body">
+      <div class="table-responsive text-nowrap">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Адресс</th>
+              <th>ID</th>
+              <th>Площадь</th>
+              <th>Комнат</th>
+              <th>Дата</th>
+              <th>Цена</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @histories.each do |row| %>
+              <tr>
+                <td>
+                  <%= link_to(@flat&.adress, @flat&.url, target: '_blank') %>
+                </td>
+                <td><%= @flat&.object_id %></td>
+                <td><%= @flat&.area %></td>
+                <td><%= @flat&.rooms&.round %></td>
+                <td><%= row['date'] %></td>
+                <td><%= number_to_currency(row['price_usd'], precision: 0, delimiter: ' ') %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -26,6 +26,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :price_history, only: %i[index create]
+
   namespace :stats do
     get :totals, to: 'main_page#totals'
   end

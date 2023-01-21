@@ -1,0 +1,7 @@
+<%= turbo_frame_tag 'search_flat_history', target: 'history_table' do %>
+  <%= form_tag url_for(action: 'create'), class: '', data: { action: "turbo:submit-end->stars#afterSubmit" }, method: "post" do %>
+    <%= label_tag 'Flat URL', nil, class: 'form-label' %>
+    <%= text_field_tag 'url', nil, class: 'form-control', placeholder: 'https://r.onliner.by/pk/apartments/' %>
+    <%= submit_tag "Найти", class: 'btn btn-primary' %>
+  <% end %>
+<% end %>
