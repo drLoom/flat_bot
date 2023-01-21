@@ -6,8 +6,8 @@ module Repositories
       def call
         sql = <<~SQL
           SELECT date, sum(cnt) as doubles FROM (
-            select date, internal_id, count(distinct object_id) cnt from flats_hist
-            group by date, internal_id
+            select date, img_id, count(distinct object_id) cnt from flats_hist
+            group by date, img_id
             having count(distinct object_id) > 1
           ) t GROUP BY date
         SQL

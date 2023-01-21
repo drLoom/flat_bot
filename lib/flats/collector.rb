@@ -52,8 +52,9 @@ module Flats
     def save_results(results)
       results.each do |r|
         flat = ::FlatsHist.find_by(date: r[:date], object_id: r[:object_id]) || ::FlatsHist.new
-        flat.update(r)
+        flat.assign_attributes(r)
         flat.internal_id = flat.hash_internal_key
+        flat.img_id      = img_key
         flat.save
       end
     end
