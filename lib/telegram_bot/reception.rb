@@ -163,8 +163,9 @@ module TelegramBot
         when /onliner\.by.*apartments\/(\d+)/
           object_id = cmd[/onliner\.by.*apartments\/(\d+)/, 1].to_i
           history   = flatt_history(object_id)
+          flat      = FlatsHist.recent.find_by(object_id: object_id)
 
-          client.send_message(chat_id:dispatcher.user.chat_id, text: prepare_history(history))
+          client.send_message(chat_id:dispatcher.user.chat_id, text: prepare_history(history, flat), parse_mode: 'MarkdownV2')
         else
           client.send_message(chat_id:dispatcher.user.chat_id, text: @anecs.sample)
         end
@@ -291,14 +292,24 @@ module TelegramBot
       Repositories::Flats::FlatHistory.new.call(object_id)
     end
 
-    def prepare_history(rows)
-      rows.last(20).map do |r|
+    def prepare_history(rows, flat)
+      diff = (rows.last['price_usd'] - rows.first['price_usd']).round
+
+      pirces = rows.last(30).map do |r|
         [
           r['date'],
           number_to_currency(r['price_usd'], precision: 0, delimiter: ' '),
           direction(r['price_usd'], r['previous_price'])
         ].compact.join(' ')
       end.join("\n")
+
+      message = <<~MSG
+        #{pirces}\n
+        Изменение: #{diff}$\n
+        [#{flat.object_id}](#{flat.url})
+      MSG
+
+      message.gsub('.', '\\.').gsub('-', '\\-')
     end
 
     def direction(price, previous_price)
