@@ -7,6 +7,7 @@ class CacheWarm
   end
 
   def call
+    Rails.cache.clear
     host = Rails.application.config.host
 
     paths = %w[
