@@ -52,6 +52,6 @@ class StarController < ApplicationController
   end
 
   def get_stars
-    Star.includes(flat_view: [:latest_hist, :begined_hist]).where(user: current_user)
+    Star.includes(:flats_hists).where(user: current_user)
   end
 end

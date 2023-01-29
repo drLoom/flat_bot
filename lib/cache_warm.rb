@@ -13,6 +13,7 @@ class CacheWarm
     paths = %w[
       /graphs/charts
       /graphs/meter
+      /graphs/meter/closed_flats
       /graphs/meter/inc_dec
       /graphs/old_new
       /graphs/doubles

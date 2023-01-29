@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     resources :meter, only: %i[index] do
       collection do
         get :inc_dec
+        get :closed_flats
       end
     end
     resources :old_new, only: %i[index]

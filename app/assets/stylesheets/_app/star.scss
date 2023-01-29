@@ -1,5 +1,6 @@
 .stars-card {
   margin-top: 100px;
+  width: 1500px;
 }
 
 .add_star_form {
@@ -13,4 +14,8 @@ a.star-delete:visited,
 a.star-delete:active {
   color: inherit;
   text-decoration: none;
+}
+
+tr.gone {
+  background-color: gainsboro;
 }

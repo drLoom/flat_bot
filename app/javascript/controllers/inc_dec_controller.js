@@ -5,7 +5,6 @@ import { COLORS } from 'settings/colors';
 
 export default class extends ChartDataController {
   drawChart(data) {
-    console.log(data);
     Highcharts.chart(this.element, {
       title: {
         text: 'Снижение/повышение цены'
